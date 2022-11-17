@@ -1,6 +1,7 @@
 package docSharing.controller;
 
 import docSharing.Entities.User;
+import docSharing.repository.UserRepository;
 import docSharing.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,11 +31,15 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-
-    public ResponseEntity<User> getUserById(@RequestParam int id){
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<User> getUser(@RequestParam User user) throws SQLDataException {
+        return new ResponseEntity<>(userService.findUser(user), HttpStatus.OK);
     }
 
+    @RequestMapping(value="/modify/password",method = RequestMethod.PATCH)
+    public String modifyPassword(@RequestParam String email,@RequestParam String newPassword,@RequestParam String token)
+    {
+        return email;
+    }
     @RequestMapping(value="/delete/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable("id") int id){
         return ResponseEntity.noContent().build();
