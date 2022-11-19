@@ -25,7 +25,6 @@ public class Document {
     }
 
 
-
     public Map<User, UserRole> getUsersInDoc() {
         return UsersInDoc;
     }

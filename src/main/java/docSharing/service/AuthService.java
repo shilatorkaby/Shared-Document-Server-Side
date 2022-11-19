@@ -1,6 +1,9 @@
 package docSharing.service;
 
 import docSharing.Entities.User;
+import docSharing.controller.AuthController;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -8,35 +11,33 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 public class AuthService {
 
-    private final Map<Integer, String> Tokens;
+    private final Map<String, String> Tokens;
+
+    private final TokenService tokenService;
+    private Logger logger;
 
     public AuthService() {
         this.Tokens = new HashMap<>();
+        this.logger = LogManager.getLogger(AuthController.class.getName());
+        this.tokenService = new TokenService();
     }
 
-    private String createNewToken(User user)
-    {
-        String s= AuthService.generateRandomToken(8);
-        Tokens.put(user.getId(),s);
-        return s;
+
+    public String token(){
+        String token = tokenService.generateNewToken();
+        logger.debug("Token generated: {}" ,token);
+        return token;
     }
 
-    public String login(String email, String password) {
-
-        return email;
-    }
-    public boolean checkToken(String email,String Token)
-    {
-        return false;
-    }
-    private static String generateRandomToken(int length)
-    {
-        assert length>0;
-        StringBuilder result= new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            result.append((char) ThreadLocalRandom.current().nextInt(33, 125));
-        }
-        return result.toString();
+    public String register(String email) {
+        String token = token();
+        Tokens.put(email,token);
+        return token;
     }
 
+    public String login(String email) {
+        String token = token();
+        Tokens.put(email,token);
+        return token;
+    }
 }
