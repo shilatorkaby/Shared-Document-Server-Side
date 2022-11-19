@@ -6,6 +6,11 @@ import java.util.Objects;
 @Entity
 @Table(name = "user")
 public class User {
+    @Column(name = "verification_code", length = 64)
+    private String verificationCode;
+    //@Column (name = "enabled")
+    private boolean enabled;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -13,10 +18,21 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
+    public User(){}
 
-
-    public void setId(int id) {
+    public User(int id, String name, String email, String password) {
         this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public int getId() {
@@ -27,20 +43,32 @@ public class User {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getPassword() {
         return password;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setPassword(String password) {
