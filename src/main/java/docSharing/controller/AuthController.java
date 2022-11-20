@@ -38,19 +38,22 @@ public class AuthController {
     }
 
 
-//    @RequestMapping(value = "/login", method = RequestMethod.GET)
-//    public String login(@RequestParam String email, @RequestParam String password) {
-//        try {
-//            validation.isValidEmail(email);
-//            validation.isValidPassword(password);
-//            String token = authService.login(email);
-//            System.out.println("Login succeeded.");
-//            return token;
-//        } catch (IllegalArgumentException exp) {
-//            System.out.println("Login failed." + exp.getMessage());
-//            return null;
-//        }
-//    }
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public String login(@RequestBody User user) {
+        try {
+            validation.isValidEmail(user.getEmail());
+            validation.isValidPassword(user.getPassword());
+            String token = authService.login(user);
+            if(token != null) {
+                System.out.println("Login succeeded.");
+                return token;
+            }
+            else return null;
+        } catch (IllegalArgumentException exp) {
+            System.out.println("Login failed." + exp.getMessage());
+            return null;
+        }
+    }
 }
 
 
