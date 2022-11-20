@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         User user = new User(1234,"shilat","shilatprojects@gmail.com","shilat1");
         UserController userController = new UserController();
-        userController.createNewUser(user);
+       // userController.createNewUser(user);
 
     }
 

@@ -1,6 +1,7 @@
 package docSharing;
 
 import docSharing.Entities.User;
+import docSharing.controller.AuthController;
 import docSharing.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -12,7 +13,7 @@ import org.springframework.context.event.EventListener;
 @SpringBootApplication
 public class SpringApp {
     @Autowired
-    private UserService userService;
+    private AuthController authController;
     public static void main(String[] args) {
         SpringApplication.run(SpringApp.class, args);
     }
@@ -21,6 +22,6 @@ public class SpringApp {
     public void sendMail()
     {
         User user = new User(1234,"shilat","shilatprojects@gmail.com","shilat1");
-        userService.sendmail(user);
+        authController.createUser(user);
     }
 }
