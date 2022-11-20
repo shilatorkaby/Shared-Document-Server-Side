@@ -9,12 +9,26 @@ import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 
-
+@Entity
 public class VerificationToken {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    //private static final int EXPIRATION = 60 * 24;
+
     private String token;
+
+    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "id")
+    private User user;
+
     private Date expiryDate;
 
-    public VerificationToken() {this.token = generateNewToken();}
+    public VerificationToken() {
+        this.token = generateNewToken();
+
+    }
 
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
         Calendar cal = Calendar.getInstance();
@@ -24,6 +38,7 @@ public class VerificationToken {
     }
 
     public VerificationToken(User user) {
+        this.user = user;
        this.token = generateNewToken();
     }
 
@@ -33,9 +48,28 @@ public class VerificationToken {
         return Base64.getUrlEncoder().encodeToString(randomBytes);
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getToken() {
         return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Date getExpiryDate() {
@@ -49,7 +83,9 @@ public class VerificationToken {
     @Override
     public String toString() {
         return "VerificationToken{" +
+                "id=" + id +
                 ", token='" + token + '\'' +
+                ", user=" + user +
                 ", expiryDate=" + expiryDate +
                 '}';
     }
