@@ -5,7 +5,6 @@ import docSharing.Entities.User;
 import docSharing.Entities.VerificationToken;
 import docSharing.controller.AuthController;
 import docSharing.repository.UserRepository;
-import docSharing.repository.VerificationTokenRepository;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
