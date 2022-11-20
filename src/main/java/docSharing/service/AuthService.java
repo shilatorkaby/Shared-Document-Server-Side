@@ -24,8 +24,6 @@ public class AuthService {
 
     @Autowired
     private JavaMailSender mailSender;
-    @Autowired
-    private VerificationTokenRepository tokenRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -38,24 +36,26 @@ public class AuthService {
     public User register(User user)
     {
         VerificationToken verificationUser = new VerificationToken(user);
-        sendmail(user);
-        return tokenRepository.save(verificationUser).getUser();
+        System.out.println(user.toString());
+        sendmail(verificationUser);
+        User u = verificationTokenRepository.save(verificationUser).getUser();
+        System.out.println(u.toString());
+        return u;
     }
 
 
 
-    public void sendmail(User user)
+    public void sendmail(VerificationToken verificationUser)
     {
-        String token = UUID.randomUUID().toString();
 
         SimpleMailMessage message =new SimpleMailMessage();
         message.setFrom("startgooglproject@gmail.com");
-        message.setTo(user.getEmail());
+        message.setTo( verificationUser.getUser().getEmail());
 
 
-        String content =  "Dear "+user.getName()+",\n"
+        String content =  "Dear "+ verificationUser.getUser().getName() +",\n"
                 + "Please click the link below to verify your registration:\n"
-                + "http://localhost:8080/auth/verify/" + token
+                + "http://localhost:8080/auth/verify/" + verificationUser.getToken()
                 + "\nThank you.";
 
         message.setText(content);
@@ -64,13 +64,14 @@ public class AuthService {
         mailSender.send(message);
 
         System.out.println("mail sent successfully");
-
     }
 
     public String verifyToken(String token) {
-        VerificationToken user = verificationTokenRepository.findByToken(token);
-        userRepository.save(user.getUser());
-        return user.getUser().toString();
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        System.out.println(token);
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
+        userRepository.save(verificationToken.getUser());
+        return "Saved user";
     }
 
 //    public String login(String email) {

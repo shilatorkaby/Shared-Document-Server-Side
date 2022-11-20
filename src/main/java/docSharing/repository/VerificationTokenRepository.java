@@ -10,9 +10,7 @@ public interface VerificationTokenRepository extends JpaRepository<VerificationT
 
 
     @Query("SELECT u FROM VerificationToken u WHERE u.token = :token")
-    VerificationToken findByToken(String token);
+    VerificationToken findByToken(@Param("token") String token);
 
     VerificationToken findByUser(User user);
-
-
 }

@@ -21,7 +21,7 @@ public class SpringApp {
     @EventListener(ApplicationReadyEvent.class)
     public void sendMail()
     {
-        User user = new User(1234,"shilat","shilatprojects@gmail.com","shilat1");
+        User user = new User(1234L,"david","yudin.david@gmail.com","david");
         authController.createUser(user);
     }
 }
