@@ -17,10 +17,12 @@ import java.sql.SQLDataException;
 public class UserController {
 
     @Autowired
-    private final UserService userService= new UserService();
+    private UserService userService;
 
-
-
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<String> createNewDoc(@RequestParam User user, @RequestParam String documentName) throws SQLDataException {
+        return new ResponseEntity<>(userService.createNewDoc(user,documentName), HttpStatus.OK);
+    }
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<User> getUser(@RequestParam User user) throws SQLDataException {
         return new ResponseEntity<>(userService.findUser(user), HttpStatus.OK);
