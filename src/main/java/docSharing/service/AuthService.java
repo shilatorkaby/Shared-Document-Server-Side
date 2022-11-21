@@ -17,12 +17,11 @@ public class AuthService {
 
     HashMap <String,String> tempRegistered = new HashMap<>(); //token,mail address
     @Autowired
-
     private JavaMailSender mailSender;
 
     @Autowired
     private UserRepository userRepository;
-    private Logger logger;
+    private final Logger logger;
 
     public AuthService() {
         this.logger = LogManager.getLogger(AuthService.class.getName());
@@ -31,7 +30,7 @@ public class AuthService {
     public User register(User user)
     {
         VerificationToken verificationUser = new VerificationToken(user);
-        if(!tempRegistered.containsValue(user.getEmail()) && !userInTokens(user.getEmail())) {
+        if(!tempRegistered.containsValue(user.getEmail()) && userInTokens(user.getEmail()) != null) {
             sendmail(verificationUser, user);
             tokensByUsers.put(verificationUser.getToken(),user);
             tempRegistered.put(verificationUser.getToken(), user.getEmail());
@@ -70,15 +69,18 @@ public class AuthService {
     }
 
     public String login(User user) {
-        return(userInTokens(user.getEmail())? user.getEmail():null);
+        String existToken = userInTokens(user.getEmail());
+        if (existToken != null && Objects.equals(tokensByUsers.get(existToken).getPassword(), user.getPassword()))
+            return ("Login succeed");
+        else
+            return ("Login failed - you need to sign up first");
+
     }
 
     boolean registeredUser(String token)
     {
         User user = tokensByUsers.get(token);
-        if (user != null && tempRegistered.get(token) != null)
-            return true;
-        return false;
+        return (user != null && tempRegistered.get(token) != null);
     }
 
     void addUserToDatabase(User user) {
@@ -86,13 +88,13 @@ public class AuthService {
             userRepository.save(user);
     }
 
-    boolean userInTokens(String email)
+    String userInTokens(String email)
     {
         for(Map.Entry<String, User> entry : tokensByUsers.entrySet())
         {
-            if (entry.getValue().getEmail() == email)
-                return true;
+            if (Objects.equals(entry.getValue().getEmail(), email))
+                return entry.getKey();
         }
-        return false;
+        return null;
     }
 }

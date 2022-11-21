@@ -12,14 +12,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
     @Autowired
-    private AuthService authService;
+    private final AuthService authService;
     public final Validation validation;
-    private Logger logger;
 
     public AuthController() {
         this.authService = new AuthService();
         this.validation = new Validation();
-        this.logger = LogManager.getLogger(AuthController.class.getName());
+        Logger logger = LogManager.getLogger(AuthController.class.getName());
     }
 
 
@@ -43,13 +42,8 @@ public class AuthController {
         try {
             validation.isValidEmail(user.getEmail());
             validation.isValidPassword(user.getPassword());
-            String token = authService.login(user);
-            if(token != null) {
-                System.out.println("Login succeeded.");
-                return token;
-            }
-            else return null;
-        } catch (IllegalArgumentException exp) {
+            return authService.login(user);
+            } catch (IllegalArgumentException exp) {
             System.out.println("Login failed." + exp.getMessage());
             return null;
         }
