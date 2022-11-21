@@ -16,10 +16,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<String> createNewDoc(@RequestParam User user, @RequestParam String documentName) throws SQLDataException {
-        return new ResponseEntity<>(userService.createNewDoc(user,documentName), HttpStatus.OK);
-    }
+//    @RequestMapping(method = RequestMethod.POST)
+//    public ResponseEntity<String> createNewDoc(@RequestParam User user, @RequestParam String documentName) throws SQLDataException {
+//        return new ResponseEntity<>(userService.createNewDoc(user,documentName), HttpStatus.OK);
+//    }
 
 
     @RequestMapping(method = RequestMethod.GET)

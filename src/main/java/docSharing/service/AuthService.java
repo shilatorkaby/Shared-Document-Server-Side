@@ -2,6 +2,7 @@ package docSharing.service;
 import docSharing.Entities.User;
 import docSharing.Entities.VerificationToken;
 import docSharing.repository.UserRepository;
+import docSharing.utils.Email;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ public class AuthService {
     HashMap<String,User> tokensByUsers = new HashMap<>();
 
     HashMap <String,String> tempRegistered = new HashMap<>(); //token,mail address
+
     @Autowired
     private JavaMailSender mailSender;
 
@@ -40,19 +42,14 @@ public class AuthService {
 
     public void sendmail(VerificationToken verificationToken,User user)
     {
-        SimpleMailMessage message =new SimpleMailMessage();
-        message.setFrom("startgooglproject@gmail.com");
-        message.setTo(user.getEmail());
+        String destination = user.getEmail();
+        String title = "Please verify your registration";
+        String txt = "Please click the link below to verify your registration:\n"
+                    + "http://localhost:8080/auth/verify/" + verificationToken.getToken()
+                    + "\nThank you.";
 
-
-        String content = "Please click the link below to verify your registration:\n"
-                + "http://localhost:8080/auth/verify/" + verificationToken.getToken()
-                + "\nThank you.";
-
-        message.setText(content);
-        message.setSubject("Please verify your registration");
-
-        mailSender.send(message);
+        Email email = new Email.Builder().to(destination).subject(title).content(txt).build();
+        mailSender.send(email.convertIntoMessage());
         logger.info("mail sent successfully");
     }
 
