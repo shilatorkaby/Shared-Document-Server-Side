@@ -18,10 +18,6 @@ public class User {
     @OneToMany(targetEntity=Document.class, mappedBy="email", fetch=FetchType.EAGER)
     private List<Document> documents;
 
-    /*
-    @OneToMany(targetEntity=Student.class, mappedBy="college", fetch=FetchType.EAGER)
-    private List<Student> students;
-*/
 
     public User(){}
 
