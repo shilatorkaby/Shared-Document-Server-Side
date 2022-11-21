@@ -13,10 +13,11 @@ import java.util.*;
 @Service
 public class AuthService {
 
-    HashMap<String,User> tokens = new HashMap<>();
+    HashMap<String,User> tokensByUsers = new HashMap<>();
 
-    HashMap <String,String> registeredUsers = new HashMap<>();
+    HashMap <String,String> tempRegistered = new HashMap<>(); //token,mail address
     @Autowired
+
     private JavaMailSender mailSender;
 
     @Autowired
@@ -30,8 +31,11 @@ public class AuthService {
     public User register(User user)
     {
         VerificationToken verificationUser = new VerificationToken(user);
-        sendmail(verificationUser,user);
-        tokens.put(verificationUser.getToken(),user);
+        if(!tempRegistered.containsValue(user.getEmail()) && !userInTokens(user.getEmail())) {
+            sendmail(verificationUser, user);
+            tokensByUsers.put(verificationUser.getToken(),user);
+            tempRegistered.put(verificationUser.getToken(), user.getEmail());
+        }
         return user;
     }
 
@@ -42,8 +46,7 @@ public class AuthService {
         message.setTo(user.getEmail());
 
 
-        String content =  "Dear "+user.getName()+",\n"
-                + "Please click the link below to verify your registration:\n"
+        String content = "Please click the link below to verify your registration:\n"
                 + "http://localhost:8080/auth/verify/" + verificationToken.getToken()
                 + "\nThank you.";
 
@@ -55,27 +58,41 @@ public class AuthService {
     }
 
     public String verifyToken(String token) {
-        User user = tokens.get(token);
-        if (user!= null) {
-            logger.info("user by token: " + user.getEmail());
-            if (!userInDB(user)) {
-                userRepository.save(user);
-                registeredUsers.put(token,user.getEmail());
-                logger.info("user saved successfully");
-                return user.getEmail();
-            }
+        if (registeredUser(token)) {
+            logger.info("user with token: " + token +"has registered as required");
+
+            tempRegistered.remove(token);
+            addUserToDatabase(tokensByUsers.get(token));
+            return "Email verification was done successfully";
         }
-        return null;
+        else
+            return "You need to sign up first";
     }
 
     public String login(User user) {
-        return(registeredUsers.containsValue(user.getEmail())? user.getEmail():null);
+        return(userInTokens(user.getEmail())? user.getEmail():null);
     }
 
-        boolean userInDB(User user)
+    boolean registeredUser(String token)
+    {
+        User user = tokensByUsers.get(token);
+        if (user != null && tempRegistered.get(token) != null)
+            return true;
+        return false;
+    }
+
+    void addUserToDatabase(User user) {
+        if (userRepository.findByEmail(user.getEmail()) == null)
+            userRepository.save(user);
+    }
+
+    boolean userInTokens(String email)
+    {
+        for(Map.Entry<String, User> entry : tokensByUsers.entrySet())
         {
-            return (userRepository.findByEmail(user.getEmail()) != null);
+            if (entry.getValue().getEmail() == email)
+                return true;
         }
-
-
+        return false;
+    }
 }

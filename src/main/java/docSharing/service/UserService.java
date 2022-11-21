@@ -1,23 +1,12 @@
 package docSharing.service;
 
-import docSharing.Entities.OnRegistrationCompleteEvent;
 import docSharing.Entities.User;
-import docSharing.Entities.VerificationToken;
 import docSharing.controller.AuthController;
 import docSharing.repository.UserRepository;
-import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
 import java.sql.SQLDataException;
-import java.util.UUID;
 
 @Service
 public class UserService {
