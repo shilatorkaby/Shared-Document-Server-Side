@@ -1,21 +1,18 @@
 package docSharing.Entities;
-
 import javax.persistence.*;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
-import java.util.List;
 
 @Entity
 public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     @Column(name = "email", nullable = false)
     private String email;
 
     String fileName;
     HashMap<User,UserRole> activeUsers;
+
     String fileContent;
 
     public String getEmail() {
@@ -27,27 +24,32 @@ public class Document {
     }
 
     public Document() {
-        //this.activeUsers = new HashMap<>();
+        this.activeUsers = new HashMap<>();
     }
 
-    public Document(String name, String PATH) {
+    public Document(String name) {
         this.fileName = name;
         this.activeUsers = new HashMap<>();
-
-//        try {
-//            this.fileContent = new FileWriter(PATH + name+".txt"); // fileContent.close();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-
     }
 
-    public String getName() {
+   public String getFileContent() {
+        return fileContent;
+    }
+
+    public void setFileContent(String fileContent) {
+        this.fileContent = fileContent;
+    }
+
+    public String getFileName() {
         return fileName;
     }
 
-    public void setName(String name) {
-        this.fileName = name;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override

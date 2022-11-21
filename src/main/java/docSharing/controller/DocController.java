@@ -1,10 +1,17 @@
 package docSharing.controller;
-import org.springframework.stereotype.Controller;
+import docSharing.Entities.Document;
+import docSharing.service.DocService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 
-@Controller
+@RestController
+@CrossOrigin
+@RequestMapping("/doc")
 public class DocController {
+    @Autowired
+    private DocService docService;
 
     public void importDod(String fileName) {
         try {
@@ -28,4 +35,11 @@ public class DocController {
             throw new RuntimeException(e);
         }
     }
-}
+
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public String save(@RequestBody Document document) {
+        return docService.save(document);
+    }
+
+
+    }

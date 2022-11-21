@@ -1,13 +1,10 @@
 package docSharing.controller;
-
 import docSharing.Entities.User;
-import docSharing.Entities.VerificationToken;
 import docSharing.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLDataException;
 
@@ -23,6 +20,8 @@ public class UserController {
     public ResponseEntity<String> createNewDoc(@RequestParam User user, @RequestParam String documentName) throws SQLDataException {
         return new ResponseEntity<>(userService.createNewDoc(user,documentName), HttpStatus.OK);
     }
+
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<User> getUser(@RequestParam User user) throws SQLDataException {
         return new ResponseEntity<>(userService.findUser(user), HttpStatus.OK);

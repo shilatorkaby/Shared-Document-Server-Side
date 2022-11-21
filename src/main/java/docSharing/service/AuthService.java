@@ -30,7 +30,7 @@ public class AuthService {
     public User register(User user)
     {
         VerificationToken verificationUser = new VerificationToken(user);
-        if(!tempRegistered.containsValue(user.getEmail()) && userInTokens(user.getEmail()) != null) {
+        if(!tempRegistered.containsValue(user.getEmail()) && userInTokens(user.getEmail()) == null) {
             sendmail(verificationUser, user);
             tokensByUsers.put(verificationUser.getToken(),user);
             tempRegistered.put(verificationUser.getToken(), user.getEmail());
