@@ -1,6 +1,8 @@
 package docSharing.Entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -12,14 +14,26 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
+
+    @OneToMany(targetEntity=Document.class, mappedBy="email", fetch=FetchType.EAGER)
+    private List<Document> documents;
+
+    /*
+    @OneToMany(targetEntity=Student.class, mappedBy="college", fetch=FetchType.EAGER)
+    private List<Student> students;
+*/
+
     public User(){}
 
-    public User(Long id, String name, String email, String password) {
-        this.id = id;
+    public User(String email, String password) {
         this.email = email;
         this.password = password;
+        this.documents = new ArrayList<>();
     }
 
+    public List<Document> getDocuments() {
+        return documents;
+    }
 
     public Long getId() {
         return id;
@@ -65,6 +79,7 @@ public class User {
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", documents=" + documents +
                 '}';
     }
 }
