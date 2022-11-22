@@ -15,6 +15,18 @@ public class Document {
 
     String fileContent;
 
+    public Document() {}
+
+    public Document(String ownerEmail, String fileName) {
+        this.email = ownerEmail;
+        this.fileName = fileName;
+        this.activeUsers = new HashMap<>();
+    }
+
+    public HashMap<User, UserRole> getActiveUsers() {
+        return activeUsers;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -23,14 +35,6 @@ public class Document {
         this.email = email;
     }
 
-    public Document() {
-        this.activeUsers = new HashMap<>();
-    }
-
-    public Document(String name) {
-        this.fileName = name;
-        this.activeUsers = new HashMap<>();
-    }
 
    public String getFileContent() {
         return fileContent;
@@ -55,7 +59,8 @@ public class Document {
     @Override
     public String toString() {
         return "Document{" +
-                "fileName='" + fileName + '\'' +
+                "ownerEmail='" + email + '\'' +
+                ", fileName='" + fileName + '\'' +
                 '}';
     }
 }
