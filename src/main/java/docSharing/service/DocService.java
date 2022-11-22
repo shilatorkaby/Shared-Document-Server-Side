@@ -10,31 +10,31 @@ import java.io.Writer;
 
 @Service
 public class DocService {
-//    @Autowired
-//    private DocRepository docRepository;
-//
-//    public String save(Document document)
-//    {
-//        if (getDocFromDatabase(document) != null) {
-//            //docRepository.updateFileContent(document.getId(), document.getFileContent());
-//            return "file's content was updated";
-//        }
-//        return "File doesn't exists";
-//    }
-//
-//    Document getDocFromDatabase(Document document)
-//    {
-//        return docRepository.findByDocId(document.getId());
-//    }
-//    public String export(Document document,String PATH) // PATH= PATH + user.getEmail() + "/"
-//    {
-//        try {
-//            Writer fileContent = new FileWriter(document.getFileName()+".txt");
-//            fileContent.write(document.getFileContent());
-//            fileContent.close();
-//            return "File's content saved successfully!";
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    @Autowired
+    private DocRepository docRepository;
+
+    public String save(Document document)
+    {
+        if (getDocFromDatabase(document) != null) {
+            //docRepository.updateFileContent(document.getId(), document.getFileContent());
+            return "file's content was updated";
+        }
+        return "File doesn't exists";
+    }
+
+    Document getDocFromDatabase(Document document)
+    {
+        return docRepository.findByDocId(document.getId());
+    }
+    public String export(Document document,String PATH) // PATH= PATH + user.getEmail() + "/"
+    {
+        try {
+            Writer fileContent = new FileWriter(document.getFileName()+".txt");
+            fileContent.write(document.getFileContent());
+            fileContent.close();
+            return "File's content saved successfully!";
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
