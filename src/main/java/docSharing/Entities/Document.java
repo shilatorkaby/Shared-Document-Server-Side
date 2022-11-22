@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Entity
-@TypeDef(name = "json", typeClass = JsonType.class)
 public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,8 +31,6 @@ public class Document {
         this.activeUsers = new HashMap<>();
     }
 
-    @Type(type = "json")
-    @Column(columnDefinition = "jsonb")
     public Map<String, String> getActiveUsers() {
         return activeUsers;
     }
