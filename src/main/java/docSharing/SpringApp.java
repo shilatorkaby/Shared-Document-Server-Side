@@ -25,6 +25,7 @@ public class SpringApp {
     {
         User user = new User("shilatprojects@gmail.com","shilat1");
         authController.createUser(user);
+
         authController.login(user);
 
         try {

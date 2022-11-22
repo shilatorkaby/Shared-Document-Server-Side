@@ -25,7 +25,7 @@ public class AuthController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<String> createUser(@RequestBody User user){
         User verifiedUser = authService.register(user);
-        if (user != null)
+        if (verifiedUser != null)
             return ResponseEntity.ok(verifiedUser.toString());
         else
             return ResponseEntity.notFound().build();
