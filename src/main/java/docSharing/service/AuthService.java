@@ -79,8 +79,9 @@ public class AuthService {
     public String login(User user) {
 
         if (authenticateLogin(user)) {
-            cachedUsers.put(VerificationToken.generateNewToken(), user);
-            return "Login succeed";
+            String token = VerificationToken.generateNewToken();
+            cachedUsers.put(token, user);
+            return token;
         }
         return "Login failed";
     }
@@ -93,5 +94,9 @@ public class AuthService {
 
     boolean isEmailInDatabase(String email) {
         return (userRepository.findByEmail(email) != null);
+    }
+
+    public User getCachedUser(String token){
+        return cachedUsers.get(token);
     }
 }

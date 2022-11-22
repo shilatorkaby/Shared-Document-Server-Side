@@ -1,5 +1,7 @@
 package docSharing.controller;
+import docSharing.Entities.Document;
 import docSharing.Entities.User;
+import docSharing.service.AuthService;
 import docSharing.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,13 +16,10 @@ import java.sql.SQLDataException;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    AuthService authService;
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<String> createNewDoc(@RequestParam User user, @RequestParam String documentName) throws SQLDataException {
-        return new ResponseEntity<>(userService.createNewDoc(user,documentName), HttpStatus.OK);
-    }
-
+    @Autowired
+    UserService userService;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<User> getUser(@RequestParam User user) throws SQLDataException {
@@ -32,6 +31,20 @@ public class UserController {
     {
         return email;
     }
+
+    @RequestMapping(value="/create", method = RequestMethod.POST)
+    public ResponseEntity<String> createDocument(String token, @RequestBody Document document){
+
+        User user = authService.getCachedUser(token);
+
+        if(user != null){
+            Document temp = userService.createDocument(user, document);
+            if(temp != null)
+                return ResponseEntity.ok(temp.toString());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @RequestMapping(value="/delete/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable("id") int id){
         return ResponseEntity.noContent().build();

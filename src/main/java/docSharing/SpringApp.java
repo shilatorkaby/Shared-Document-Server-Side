@@ -1,5 +1,6 @@
 package docSharing;
 
+import docSharing.Entities.Document;
 import docSharing.Entities.User;
 import docSharing.controller.AuthController;
 import docSharing.controller.UserController;
@@ -23,15 +24,9 @@ public class SpringApp {
     @EventListener(ApplicationReadyEvent.class)
     public void createDoc()
     {
-        User user = new User("shilatprojects@gmail.com","shilat1");
+        User user = new User("yudin.david@gmail.com","david");
         authController.createUser(user);
-
-        authController.login(user);
-
-        try {
-            userController.createNewDoc(user,"firstFile");
-        } catch (SQLDataException e) {
-            throw new RuntimeException(e);
-        }
+        String token = authController.login(user);
+        userController.createDocument(token, new Document("yudin.david@gmail.com", "first documnet"));
     }
 }
