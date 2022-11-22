@@ -10,14 +10,13 @@ import java.util.Objects;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    public Long id;
     @Column(unique = true)
     private String email;
     private String password;
 
     @OneToMany(targetEntity=Document.class, mappedBy="email", fetch=FetchType.EAGER)
     private List<Document> documents;
-
 
     public User(){}
 

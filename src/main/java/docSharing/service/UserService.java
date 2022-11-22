@@ -26,7 +26,7 @@ public class UserService {
 
         if (!findDoc(user, document.getFileName())) {
             Document newDocument = new Document(user.getEmail(), document.getFileName());
-            newDocument.getActiveUsers().put(user, UserRole.OWNER);
+            newDocument.getActiveUsers().put(user.getEmail(), "owner");
             user.getDocuments().add(newDocument);
             docRepository.save(newDocument);
             return newDocument;

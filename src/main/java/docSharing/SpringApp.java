@@ -25,14 +25,8 @@ public class SpringApp {
     public void createDoc()
     {
         User user = new User("yudin.david@gmail.com","david");
-        // authController.createUser(user);
-        authController.login(user);
-
-        String token = "";
-
-        userController.createDocument(token,new Document("yudin.david@gmail.com", "first documnet"));
-//        } catch (SQLDataException e) {
-//            throw new RuntimeException(e);
-//        }
+        authController.createUser(user);
+        String token = authController.login(user);
+        userController.createDocument(token, new Document("yudin.david@gmail.com", "first documnet"));
     }
 }

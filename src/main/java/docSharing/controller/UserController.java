@@ -19,7 +19,7 @@ public class UserController {
     AuthService authService;
 
     @Autowired
-    private UserService userService;
+    UserService userService;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<User> getUser(@RequestParam User user) throws SQLDataException {
@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @RequestMapping(value="/create", method = RequestMethod.POST)
-    public ResponseEntity<String> createDocument(@RequestHeader("token") String token, @RequestBody Document document){
+    public ResponseEntity<String> createDocument(String token, @RequestBody Document document){
 
         User user = authService.getCachedUser(token);
 

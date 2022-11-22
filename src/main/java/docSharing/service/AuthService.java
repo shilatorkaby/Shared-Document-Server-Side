@@ -81,7 +81,7 @@ public class AuthService {
         if (authenticateLogin(user)) {
             String token = VerificationToken.generateNewToken();
             cachedUsers.put(token, user);
-            return "Login succeed your token is: " + token;
+            return token;
         }
         return "Login failed";
     }

@@ -1,8 +1,15 @@
 package docSharing.Entities;
+import com.vladmihalcea.hibernate.type.json.JsonType;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+
 import javax.persistence.*;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Map;
 
 @Entity
+@TypeDef(name = "json", typeClass = JsonType.class)
 public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -11,19 +18,23 @@ public class Document {
     private String email;
 
     String fileName;
-    HashMap<User,UserRole> activeUsers;
+    //@Column(name="UserRole", columnDefinition="enum(Owner,Editor,Viewer)")
+
+    Map<String,String> activeUsers;
 
     String fileContent;
 
     public Document() {}
 
-    public Document(String ownerEmail, String fileName) {
-        this.email = ownerEmail;
+    public Document(String email, String fileName) {
+        this.email = email;
         this.fileName = fileName;
         this.activeUsers = new HashMap<>();
     }
 
-    public HashMap<User, UserRole> getActiveUsers() {
+    @Type(type = "json")
+    @Column(columnDefinition = "jsonb")
+    public Map<String, String> getActiveUsers() {
         return activeUsers;
     }
 
