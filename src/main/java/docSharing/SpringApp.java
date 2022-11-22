@@ -23,6 +23,6 @@ public class SpringApp {
     {
         User user = new User("yudin.david@gmail.com","david");
         authController.createUser(user);
-        authController.login(user);
+        //authController.login(user);
     }
 }

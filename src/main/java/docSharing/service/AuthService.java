@@ -1,97 +1,97 @@
 package docSharing.service;
+
 import docSharing.Entities.User;
 import docSharing.Entities.VerificationToken;
 import docSharing.repository.UserRepository;
+import docSharing.repository.VerificationTokenRepository;
 import docSharing.utils.Email;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
 import java.util.*;
 
 @Service
 public class AuthService {
 
-    HashMap<String,User> tokensByUsers = new HashMap<>();
+    // users that did a valid login
+    HashMap<String, User> cachedUsers = new HashMap<>();
 
-    HashMap <String,String> tempRegistered = new HashMap<>(); //token,mail address
+    //HashMap<String, String> tempRegistered = new HashMap<>(); //token,mail address
 
     @Autowired
     private JavaMailSender mailSender;
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private VerificationTokenRepository verificationTokenRepository;
     private final Logger logger;
 
     public AuthService() {
         this.logger = LogManager.getLogger(AuthService.class.getName());
     }
 
-    public User register(User user)
-    {
-        VerificationToken verificationUser = new VerificationToken(user);
-        if(!tempRegistered.containsValue(user.getEmail()) && userInTokens(user.getEmail()) == null) {
-            sendmail(verificationUser, user);
-            tokensByUsers.put(verificationUser.getToken(),user);
-            tempRegistered.put(verificationUser.getToken(), user.getEmail());
-        }
+    public User register(User user) {
+
+        // email does exist
+        if (isEmailInDatabase(user.getEmail()))
+            return null;
+
+        VerificationToken verificationUser = new VerificationToken(user.getEmail(), user.getPassword());
+
+        sendEmail(verificationUser);
+
+        verificationTokenRepository.save(verificationUser);
+
         return user;
     }
 
-    public void sendmail(VerificationToken verificationToken,User user)
-    {
-        String destination = user.getEmail();
+    public void sendEmail(VerificationToken verificationToken) {
+
+        String destination = verificationToken.getEmail();
         String title = "Please verify your registration";
         String txt = "Please click the link below to verify your registration:\n"
-                    + "http://localhost:8080/auth/verify/" + verificationToken.getToken()
-                    + "\nThank you.";
+                + "http://localhost:8080/auth/verify/" + verificationToken.getToken()
+                + "\nThank you.";
 
         Email email = new Email.Builder().to(destination).subject(title).content(txt).build();
         mailSender.send(email.convertIntoMessage());
+
         logger.info("mail sent successfully");
     }
 
     public String verifyToken(String token) {
-        if (registeredUser(token)) {
-            logger.info("user with token: " + token +"has registered as required");
 
-            tempRegistered.remove(token);
-            addUserToDatabase(tokensByUsers.get(token));
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
+
+        if (verificationToken != null) {
+            verificationTokenRepository.delete(verificationToken);
+            userRepository.save(new User(verificationToken.getEmail(), verificationToken.getPassword()));
             return "Email verification was done successfully";
         }
-        else
-            return "You need to sign up first";
+        return "You need to sign up first";
     }
 
     public String login(User user) {
-        String existToken = userInTokens(user.getEmail());
-        if (existToken != null && Objects.equals(tokensByUsers.get(existToken).getPassword(), user.getPassword()))
-            return ("Login succeed");
-        else
-            return ("Login failed - you need to sign up first");
 
-    }
-
-    boolean registeredUser(String token)
-    {
-        User user = tokensByUsers.get(token);
-        return (user != null && tempRegistered.get(token) != null);
-    }
-
-    void addUserToDatabase(User user) {
-        if (userRepository.findByEmail(user.getEmail()) == null)
-            userRepository.save(user);
-    }
-
-    String userInTokens(String email)
-    {
-        for(Map.Entry<String, User> entry : tokensByUsers.entrySet())
-        {
-            if (Objects.equals(entry.getValue().getEmail(), email))
-                return entry.getKey();
+        if (authenticateLogin(user)) {
+            cachedUsers.put(VerificationToken.generateNewToken(), user);
+            return "Login succeed";
         }
-        return null;
+        return "Login failed";
+    }
+
+    boolean authenticateLogin(User user) {
+        User temp = userRepository.findByEmail(user.getEmail());
+
+        return temp != null && temp.getPassword().equals(user.getPassword());
+    }
+
+    boolean isEmailInDatabase(String email) {
+        return (userRepository.findByEmail(email) != null);
     }
 }

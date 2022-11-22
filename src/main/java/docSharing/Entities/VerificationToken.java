@@ -9,22 +9,31 @@ import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 
-
+@Entity
 public class VerificationToken {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
     private String token;
-    private Date expiryDate;
 
-    public VerificationToken() {this.token = generateNewToken();}
+    private String email;
 
-    private Date calculateExpiryDate(int expiryTimeInMinutes) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Timestamp(cal.getTime().getTime()));
-        cal.add(Calendar.MINUTE, expiryTimeInMinutes);
-        return new Date(cal.getTime().getTime());
+    private String password;
+
+    public Long getId() {
+        return id;
     }
 
-    public VerificationToken(User user) {
-       this.token = generateNewToken();
+    public VerificationToken() {
+        this.token = generateNewToken();
+    }
+
+    public VerificationToken(String email, String password) {
+        this.token = generateNewToken();
+        this.email = email;
+        this.password = password;
     }
 
     public static String generateNewToken() {
@@ -33,24 +42,15 @@ public class VerificationToken {
         return Base64.getUrlEncoder().encodeToString(randomBytes);
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 
     public String getToken() {
         return token;
-    }
-
-    public Date getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(Date expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
-    @Override
-    public String toString() {
-        return "VerificationToken{" +
-                ", token='" + token + '\'' +
-                ", expiryDate=" + expiryDate +
-                '}';
     }
 }
