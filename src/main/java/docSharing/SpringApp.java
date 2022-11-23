@@ -9,6 +9,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.ResponseEntity;
+
 import java.sql.SQLDataException;
 
 @SpringBootApplication
@@ -24,10 +26,10 @@ public class SpringApp {
     @EventListener(ApplicationReadyEvent.class)
     public void createDoc()
     {
-        User user = new User("shilatprojects@gmail.com","12356");
-        authController.createUser(user);
-        String token = authController.login(user);
-        userController.createDocument(token, new Document(user.getEmail(), "first documnet"));
-        String allDocs = String.valueOf(userController.getAllDocs(token));
+        User user = new User("yudin.david@gmail.com","12345");
+        //authController.createUser(user);
+        ResponseEntity<String> responseEntity = authController.login(user);
+        userController.createDocument(responseEntity.getBody(), new Document(user.getEmail(), "first document"));
+        String allDocs = String.valueOf(userController.getAllDocs(responseEntity.getBody()));
     }
 }
