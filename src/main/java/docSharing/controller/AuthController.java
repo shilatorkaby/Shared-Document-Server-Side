@@ -38,14 +38,15 @@ public class AuthController {
 
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String login(@RequestBody User user) {
+    public ResponseEntity<String> login(@RequestBody User user) {
         try {
             validation.isValidEmail(user.getEmail());
             validation.isValidPassword(user.getPassword());
-            return authService.login(user);
+            String token = authService.login(user);
+            return ResponseEntity.ok(token);
             } catch (IllegalArgumentException exp) {
             System.out.println("Login failed." + exp.getMessage());
-            return null;
+            return ResponseEntity.notFound().build();
         }
     }
 }

@@ -1,10 +1,6 @@
 package docSharing.Entities;
-import com.vladmihalcea.hibernate.type.json.JsonType;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,25 +11,17 @@ public class Document {
     private Long id;
     @Column(name = "email", nullable = false)
     private String email;
-
     String fileName;
-    //@Column(name="UserRole", columnDefinition="enum(Owner,Editor,Viewer)")
-
-    Map<String,String> activeUsers;
-
     String fileContent;
+
 
     public Document() {}
 
     public Document(String email, String fileName) {
         this.email = email;
         this.fileName = fileName;
-        this.activeUsers = new HashMap<>();
     }
 
-    public Map<String, String> getActiveUsers() {
-        return activeUsers;
-    }
 
     public String getEmail() {
         return email;
@@ -44,7 +32,7 @@ public class Document {
     }
 
 
-   public String getFileContent() {
+    public String getFileContent() {
         return fileContent;
     }
 

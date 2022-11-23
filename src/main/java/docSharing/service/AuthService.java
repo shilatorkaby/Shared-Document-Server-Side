@@ -1,9 +1,9 @@
 package docSharing.service;
 
 import docSharing.Entities.User;
-import docSharing.Entities.VerificationToken;
+import docSharing.Entities.Unconfirmed;
 import docSharing.repository.UserRepository;
-import docSharing.repository.VerificationTokenRepository;
+import docSharing.repository.UnconfirmedRepository;
 import docSharing.utils.Email;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +28,7 @@ public class AuthService {
     private UserRepository userRepository;
 
     @Autowired
-    private VerificationTokenRepository verificationTokenRepository;
+    private UnconfirmedRepository unconfirmedRepository;
     private final Logger logger;
 
     public AuthService() {
@@ -41,21 +41,21 @@ public class AuthService {
         if (isEmailInDatabase(user.getEmail()))
             return null;
 
-        VerificationToken verificationUser = new VerificationToken(user.getEmail(), user.getPassword());
+        Unconfirmed verificationUser = new Unconfirmed(user.getEmail(), user.getPassword());
 
         sendEmail(verificationUser);
 
-        verificationTokenRepository.save(verificationUser);
+        unconfirmedRepository.save(verificationUser);
 
         return user;
     }
 
-    public void sendEmail(VerificationToken verificationToken) {
+    public void sendEmail(Unconfirmed unconfirmed) {
 
-        String destination = verificationToken.getEmail();
+        String destination = unconfirmed.getEmail();
         String title = "Please verify your registration";
         String txt = "Please click the link below to verify your registration:\n"
-                + "http://localhost:8080/auth/verify/" + verificationToken.getToken()
+                + "http://localhost:8080/auth/verify/" + unconfirmed.getToken()
                 + "\nThank you.";
 
         Email email = new Email.Builder().to(destination).subject(title).content(txt).build();
@@ -66,11 +66,11 @@ public class AuthService {
 
     public String verifyToken(String token) {
 
-        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
+        Unconfirmed unconfirmed = unconfirmedRepository.findByToken(token);
 
-        if (verificationToken != null) {
-            verificationTokenRepository.delete(verificationToken);
-            userRepository.save(new User(verificationToken.getEmail(), verificationToken.getPassword()));
+        if (unconfirmed != null) {
+            unconfirmedRepository.delete(unconfirmed);
+            userRepository.save(new User(unconfirmed.getEmail(), unconfirmed.getPassword()));
             return "Email verification was done successfully";
         }
         return "You need to sign up first";
@@ -79,7 +79,7 @@ public class AuthService {
     public String login(User user) {
 
         if (authenticateLogin(user)) {
-            String token = VerificationToken.generateNewToken();
+            String token = Unconfirmed.generateNewToken();
             cachedUsers.put(token, user);
             return token;
         }

@@ -1,49 +1,52 @@
 package docSharing.service;
 
+import docSharing.Entities.DocPermission;
 import docSharing.Entities.Document;
 import docSharing.Entities.User;
-import docSharing.Entities.UserRole;
+import docSharing.repository.DocPermissionRepository;
 import docSharing.repository.DocRepository;
 import docSharing.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLDataException;
+import java.util.List;
 
 @Service
 public class UserService {
     private final String PATH = "src/main/java/docSharing/repository/files/";
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private DocRepository docRepository;
+    @Autowired
+    private DocPermissionRepository docPermissionRepository;
 
     public UserService() {
     }
 
     public Document createDocument(User user, Document document) {
 
+
         if (!findDoc(user, document.getFileName())) {
             Document newDocument = new Document(user.getEmail(), document.getFileName());
-            newDocument.getActiveUsers().put(user.getEmail(), "owner");
-            user.getDocuments().add(newDocument);
+
             docRepository.save(newDocument);
+            docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), "owner"));
             return newDocument;
         }
         return null;
     }
 
-    boolean docInDatabase(User user, String documentName) {
-        Document document = docRepository.findByNameAndEmail(documentName, user.getEmail());
-        return document != null;
+    public List<Document> getAllDocs(User user)
+    {
+     return docRepository.findByEmail(user.getEmail());
     }
 
-    boolean findDoc(User user, String documentName) {
-        Document doc = user.getDocuments().stream().filter(d -> d.getFileName().equals(documentName)).findAny().orElse(null);
-        if (doc != null || docInDatabase(user, documentName))
-            return true;
-        return false;
+
+       boolean findDoc(User user, String documentName) {
+
+        return docRepository.findByNameAndEmail(documentName, user.getEmail()) != null;
     }
 
     public User findUser(User user) throws SQLDataException {
@@ -54,10 +57,4 @@ public class UserService {
         return u;
     }
 
-    public User addUser(User user) throws SQLDataException {
-        findUser(user);
-        return userRepository.save(user);
-
-
-    }
 }

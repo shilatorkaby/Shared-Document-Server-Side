@@ -7,13 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.google.gson.*;
+
 
 import java.sql.SQLDataException;
+import java.util.List;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/user")
 public class UserController {
+
 
     @Autowired
     AuthService authService;
@@ -44,9 +48,25 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
+    @RequestMapping(value="/get/docs", method = RequestMethod.GET)
+    public ResponseEntity<String> getAllDocs(String token){
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+
+        User user = authService.getCachedUser(token);
+
+        if(user != null){
+            String docs = gson.toJson(userService.getAllDocs(user));
+            if(docs != null)
+                return ResponseEntity.ok(docs);
+        }
+        return ResponseEntity.notFound().build();
+    }
 
     @RequestMapping(value="/delete/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable("id") int id){
         return ResponseEntity.noContent().build();
     }
+
+
 }

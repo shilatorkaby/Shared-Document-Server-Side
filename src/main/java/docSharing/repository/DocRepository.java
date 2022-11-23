@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface DocRepository extends JpaRepository<Document, Long> {
 
@@ -17,4 +19,7 @@ public interface DocRepository extends JpaRepository<Document, Long> {
 
     @Query("update Document d set d.fileContent = :fileContent WHERE d.id = :id")
     Document updateFileContent(@Param("id") Long id,@Param("fileContent") String fileContent);
+
+    @Query("SELECT d FROM Document d WHERE d.email = :email")
+    List<Document> findByEmail(@Param("email") String email);
 }

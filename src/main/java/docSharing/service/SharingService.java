@@ -2,10 +2,8 @@ package docSharing.service;
 
 import docSharing.Entities.Contender;
 import docSharing.Entities.User;
-import docSharing.Entities.VerificationToken;
 import docSharing.utils.Email;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
