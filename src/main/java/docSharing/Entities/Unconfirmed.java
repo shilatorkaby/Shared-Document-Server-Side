@@ -1,16 +1,10 @@
 package docSharing.Entities;
-
-import org.springframework.stereotype.Service;
-
 import javax.persistence.*;
 import java.security.SecureRandom;
-import java.sql.Timestamp;
 import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
 
 @Entity
-public class VerificationToken {
+public class Unconfirmed {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -26,11 +20,11 @@ public class VerificationToken {
         return id;
     }
 
-    public VerificationToken() {
+    public Unconfirmed() {
         this.token = generateNewToken();
     }
 
-    public VerificationToken(String email, String password) {
+    public Unconfirmed(String email, String password) {
         this.token = generateNewToken();
         this.email = email;
         this.password = password;

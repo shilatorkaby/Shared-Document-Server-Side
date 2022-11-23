@@ -24,9 +24,10 @@ public class SpringApp {
     @EventListener(ApplicationReadyEvent.class)
     public void createDoc()
     {
-        User user = new User("yudin.david@gmail.com","david");
+        User user = new User("shilatprojects@gmail.com","12356");
         authController.createUser(user);
         String token = authController.login(user);
-        userController.createDocument(token, new Document("yudin.david@gmail.com", "first documnet"));
+        userController.createDocument(token, new Document(user.getEmail(), "first documnet"));
+        String allDocs = String.valueOf(userController.getAllDocs(token));
     }
 }

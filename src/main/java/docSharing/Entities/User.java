@@ -15,19 +15,11 @@ public class User {
     private String email;
     private String password;
 
-    @OneToMany(targetEntity=Document.class, mappedBy="email", fetch=FetchType.EAGER)
-    private List<Document> documents;
-
     public User(){}
 
     public User(String email, String password) {
         this.email = email;
         this.password = password;
-        this.documents = new ArrayList<>();
-    }
-
-    public List<Document> getDocuments() {
-        return documents;
     }
 
     public Long getId() {
@@ -74,7 +66,6 @@ public class User {
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", documents=" + documents +
                 '}';
     }
 }
