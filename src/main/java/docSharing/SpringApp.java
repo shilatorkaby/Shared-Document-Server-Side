@@ -12,6 +12,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
 
 import java.sql.SQLDataException;
+import java.util.Map;
 
 @SpringBootApplication
 public class SpringApp {
@@ -28,8 +29,7 @@ public class SpringApp {
 //    {
 //        User user = new User("yudin.david@gmail.com","12345");
 //        //authController.createUser(user);
-//        ResponseEntity<String> responseEntity = authController.login(user);
-//        userController.createDocument(responseEntity.getBody(), new Document(user.getEmail(), "first document"));
-//        String allDocs = String.valueOf(userController.getAllDocs(responseEntity.getBody()));
+//        ResponseEntity<Map<String, String>> responseEntity = authController.login(user);
+//        userController.createDocument(responseEntity.getBody().get("token"), new Document(user.getEmail(), "third document"));
 //    }
 }
