@@ -50,7 +50,7 @@ public class AuthService {
         return user;
     }
 
-    public void sendEmail(Unconfirmed unconfirmed) {
+    private void sendEmail(Unconfirmed unconfirmed) {
 
         String destination = unconfirmed.getEmail();
         String title = "Please verify your registration";
@@ -71,7 +71,7 @@ public class AuthService {
         if (unconfirmed != null) {
             unconfirmedRepository.delete(unconfirmed);
             userRepository.save(new User(unconfirmed.getEmail(), unconfirmed.getPassword()));
-            return "Email verification was done successfully";
+            return "<h1>Email verification was done successfully</h1>";
         }
         return "You need to sign up first";
     }
@@ -83,7 +83,7 @@ public class AuthService {
             cachedUsers.put(token, user);
             return token;
         }
-        return "Login failed";
+        return null;
     }
 
     boolean authenticateLogin(User user) {

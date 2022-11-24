@@ -23,13 +23,13 @@ public class SpringApp {
         SpringApplication.run(SpringApp.class, args);
     }
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void createDoc()
-    {
-        User user = new User("yudin.david@gmail.com","12345");
-        //authController.createUser(user);
-        ResponseEntity<String> responseEntity = authController.login(user);
-        userController.createDocument(responseEntity.getBody(), new Document(user.getEmail(), "first document"));
-        String allDocs = String.valueOf(userController.getAllDocs(responseEntity.getBody()));
-    }
+//    @EventListener(ApplicationReadyEvent.class)
+//    public void createDoc()
+//    {
+//        User user = new User("yudin.david@gmail.com","12345");
+//        //authController.createUser(user);
+//        ResponseEntity<String> responseEntity = authController.login(user);
+//        userController.createDocument(responseEntity.getBody(), new Document(user.getEmail(), "first document"));
+//        String allDocs = String.valueOf(userController.getAllDocs(responseEntity.getBody()));
+//    }
 }

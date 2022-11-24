@@ -26,9 +26,9 @@ public class AuthController {
     public ResponseEntity<String> createUser(@RequestBody User user){
         User verifiedUser = authService.register(user);
         if (verifiedUser != null)
-            return ResponseEntity.ok(verifiedUser.toString());
+            return ResponseEntity.ok().build();
         else
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().build();
     }
     @RequestMapping(value = "/verify/{token}")
     public String emailVerification(@PathVariable("token") String token)
