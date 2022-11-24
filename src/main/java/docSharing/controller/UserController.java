@@ -11,7 +11,9 @@ import com.google.gson.*;
 
 
 import java.sql.SQLDataException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -48,11 +50,15 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
-    @RequestMapping(value="/get/docs", method = RequestMethod.GET)
-    public ResponseEntity<String> getAllDocs(String token){
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    @RequestMapping(value="/get/docs", method = RequestMethod.POST)
+    public ResponseEntity<String> getAllDocs(@RequestBody String json){
 
+        Gson gson = new Gson();
+        Map<String, String> map = gson.fromJson(json, HashMap.class);
+        String token = map.get("token");
+        System.out.println(token);
 
+        gson = new GsonBuilder().setPrettyPrinting().create();
         User user = authService.getCachedUser(token);
 
         if(user != null){
