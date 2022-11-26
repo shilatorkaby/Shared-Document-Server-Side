@@ -11,8 +11,8 @@ public class Document {
     private Long id;
     @Column(name = "email", nullable = false)
     private String email;
-    String fileName;
-    String fileContent;
+    private String fileName;
+    private String fileContent;
 
 
     public Document() {}

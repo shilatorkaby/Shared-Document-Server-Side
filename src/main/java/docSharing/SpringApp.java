@@ -16,11 +16,8 @@ import java.util.Map;
 
 @SpringBootApplication
 public class SpringApp {
-    @Autowired
-    UserController userController;
-    @Autowired
-    AuthController authController;
-    public static void main(String[] args) {
+     public static void main(String[] args) {
+
         SpringApplication.run(SpringApp.class, args);
     }
 

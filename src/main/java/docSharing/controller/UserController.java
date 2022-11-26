@@ -1,18 +1,17 @@
 package docSharing.controller;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import docSharing.Entities.DocBody;
 import docSharing.Entities.Document;
 import docSharing.Entities.User;
 import docSharing.service.AuthService;
 import docSharing.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.google.gson.*;
 
-
-import java.sql.SQLDataException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -27,19 +26,10 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<User> getUser(@RequestParam User user) throws SQLDataException {
-        return new ResponseEntity<>(userService.findUser(user), HttpStatus.OK);
-    }
 
-    @RequestMapping(value="/modify/password",method = RequestMethod.PATCH)
-    public String modifyPassword(@RequestParam String email,@RequestParam String newPassword,@RequestParam String token)
-    {
-        return email;
-    }
 
     @RequestMapping(value="/create", method = RequestMethod.POST)
-    public ResponseEntity<String> createDocument(String token, @RequestBody Document document){
+    public ResponseEntity<String> createDocument(@RequestHeader ("token") String token, @RequestBody DocBody document){
 
         User user = authService.getCachedUser(token);
 
@@ -69,10 +59,6 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @RequestMapping(value="/delete/{id}")
-    public ResponseEntity<?> deleteUserById(@PathVariable("id") int id){
-        return ResponseEntity.noContent().build();
-    }
 
 
 }
