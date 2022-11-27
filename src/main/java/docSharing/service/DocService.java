@@ -10,8 +10,8 @@ public class DocService {
     @Autowired
     private DocRepository docRepository;
 
-    public String save(Document document)
-    {
+
+    public String save(Document document) {
         if (getDocFromDatabase(document) != null) {
             docRepository.updateFileContent(document.getId(), document.getFileContent());
             return "file's content was updated";
@@ -19,8 +19,7 @@ public class DocService {
         return "File doesn't exists";
     }
 
-    Document getDocFromDatabase(Document document)
-    {
+    Document getDocFromDatabase(Document document) {
         return docRepository.findByDocId(document.getId());
     }
 

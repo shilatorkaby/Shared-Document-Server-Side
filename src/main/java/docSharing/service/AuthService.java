@@ -1,7 +1,9 @@
 package docSharing.service;
 
+import docSharing.Entities.Directory;
 import docSharing.Entities.User;
 import docSharing.Entities.Unconfirmed;
+import docSharing.repository.DirectoryRepository;
 import docSharing.repository.UserRepository;
 import docSharing.repository.UnconfirmedRepository;
 import docSharing.utils.Email;
@@ -19,8 +21,6 @@ public class AuthService {
     // users that did a valid login
     HashMap<String, User> cachedUsers = new HashMap<>();
 
-    //HashMap<String, String> tempRegistered = new HashMap<>(); //token,mail address
-
     @Autowired
     private JavaMailSender mailSender;
 
@@ -29,6 +29,8 @@ public class AuthService {
 
     @Autowired
     private UnconfirmedRepository unconfirmedRepository;
+    @Autowired
+    private DirectoryRepository directoryRepository;
     private final Logger logger;
 
     public AuthService() {
@@ -70,7 +72,9 @@ public class AuthService {
 
         if (unconfirmed != null) {
             unconfirmedRepository.delete(unconfirmed);
-            userRepository.save(new User(unconfirmed.getEmail(), unconfirmed.getPassword()));
+            User user = new User(unconfirmed.getEmail(), unconfirmed.getPassword());
+            userRepository.save(user);
+            directoryRepository.save(new Directory(user.getId()*-1,"root"));
             return "<h1>Email verification was done successfully</h1>";
         }
         return "You need to sign up first";

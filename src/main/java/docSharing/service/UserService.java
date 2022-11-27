@@ -1,8 +1,7 @@
 package docSharing.service;
 
-import docSharing.Entities.DocPermission;
-import docSharing.Entities.Document;
-import docSharing.Entities.User;
+import docSharing.Entities.*;
+import docSharing.repository.DirectoryRepository;
 import docSharing.repository.DocPermissionRepository;
 import docSharing.repository.DocRepository;
 import docSharing.repository.UserRepository;
@@ -14,25 +13,27 @@ import java.util.List;
 
 @Service
 public class UserService {
-    private final String PATH = "src/main/java/docSharing/repository/files/";
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private DocRepository docRepository;
     @Autowired
     private DocPermissionRepository docPermissionRepository;
+    @Autowired
+    private DirectoryRepository directoryRepository;
 
     public UserService() {
     }
 
-    public Document createDocument(User user, Document document) {
+    public Document createDocument(User user, DocumentBody documentBody) {
 
 
-        if (!findDoc(user, document.getFileName())) {
-            Document newDocument = new Document(user.getEmail(), document.getFileName());
+        if (!findDoc(user, documentBody.getFileName())) {
+            Document newDocument = new Document(user.getEmail(), documentBody.getFileName());
 
             docRepository.save(newDocument);
             docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), "owner"));
+            directoryRepository.save(new Directory(documentBody.getFatherId(),documentBody.getFileName(),newDocument.getId()));
             return newDocument;
         }
         return null;
@@ -56,5 +57,6 @@ public class UserService {
         }
         return u;
     }
+
 
 }

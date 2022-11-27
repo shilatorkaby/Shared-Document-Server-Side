@@ -1,8 +1,6 @@
 package docSharing.Entities;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
 
 @Entity
 public class Document {
@@ -11,8 +9,8 @@ public class Document {
     private Long id;
     @Column(name = "email", nullable = false)
     private String email;
-    String fileName;
-    String fileContent;
+    private String fileName;
+    private String fileContent;
 
 
     public Document() {}
@@ -46,6 +44,10 @@ public class Document {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {

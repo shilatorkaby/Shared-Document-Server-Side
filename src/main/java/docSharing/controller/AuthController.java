@@ -1,7 +1,5 @@
 package docSharing.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import docSharing.Entities.User;
 import docSharing.service.AuthService;
 import org.apache.logging.log4j.LogManager;
@@ -9,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
