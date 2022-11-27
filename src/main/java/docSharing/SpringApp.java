@@ -6,6 +6,7 @@ import docSharing.Entities.User;
 import docSharing.controller.AuthController;
 import docSharing.controller.UserController;
 import docSharing.repository.DirectoryRepository;
+import docSharing.repository.UserRepository;
 import docSharing.service.DirectoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -27,6 +28,8 @@ public class SpringApp {
     DirectoryService directoryService;
     @Autowired
     DirectoryRepository directoryRepository;
+    @Autowired
+    UserRepository userRepository;
 
 
      public static void main(String[] args) {
@@ -38,15 +41,21 @@ public class SpringApp {
     public void createDoc()
     {
         User user = new User("shillat14@gmail.com","12345");
-        authController.createUser(user);
+//        authController.createUser(user);
         ResponseEntity<Map<String, String>> responseEntity = authController.login(user);
 
-        Long rootId = directoryRepository.getRootDir(-4L).getId();
-        userController.createDocument(responseEntity.getBody().get("token"), new DocumentBody(rootId, "first document",user.getEmail()));
-        userController.createNewDir(responseEntity.getBody().get("token"), new Directory(rootId, "first directory"));
+//        Long rootId = directoryRepository.getRootDir(-1*userRepository.findByEmail(user.getEmail()).getId()).getId();
+//        userController.createDocument(responseEntity.getBody().get("token"), new DocumentBody(rootId, "first document",user.getEmail()));
+//        userController.createNewDir(responseEntity.getBody().get("token"), new Directory(rootId, "first directory"));
+//        userController.createNewDir(responseEntity.getBody().get("token"), new Directory(8L, "second directory"));
 
         Directory directory = new Directory();
-        directory.setId(rootId);
-        System.out.println(userController.getSonsByDirId(directory).getBody());
+        directory.setId(9L);
+        directory.setFatherId(8L);
+        ResponseEntity<String> response = userController.getOptionToMove(directory);
+        System.out.println(response.getBody());
+        //directory.setFatherId(4L);
+        //directory.setFatherId(8L);
+        System.out.println(userController.changeDir(directory).getBody());
     }
 }

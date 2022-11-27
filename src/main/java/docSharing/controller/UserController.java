@@ -74,7 +74,7 @@ public class UserController {
         if(directory != null && directory.getFatherId() != null) {
             Directory changedDir = directoryService.changeDir(directory.getFatherId(),directory.getId());
             if (changedDir != null) {
-                return ResponseEntity.ok(changedDir.toString());
+                return ResponseEntity.ok(gson.toJson(changedDir));
             }
         }
         return ResponseEntity.notFound().build();

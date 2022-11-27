@@ -15,16 +15,20 @@ public class DirectoryService {
 
 
     public List<Directory> getOptionToMove(Directory directory) {
-        List<Directory> optionalDirs = new ArrayList<>();
 
-        List<Directory> sisterDirs = directoryRepository.findDirsByFatherId(directory.getFatherId());
-        if (sisterDirs != null) {
+        if (!directoryRepository.existsById(directory.getId()) || !directoryRepository.existsById(directory.getFatherId()))
+            return null;
+
+        List<Directory> optionalDirs = new ArrayList<>();
+        List<Directory> sisterDirs = directoryRepository.findDirsByFatherId(directory.getFatherId(),directory.getId());
+        if (sisterDirs.size() >0) {
             optionalDirs.addAll(sisterDirs);
         }
         Directory fatherDir = directoryRepository.findById(directory.getFatherId()).orElse(null);
-        if (fatherDir != null)
+        if (fatherDir != null && fatherDir.getFatherId() > 0)
         {
-            optionalDirs.add(fatherDir);
+            Directory grandFatherDir = directoryRepository.findById(fatherDir.getFatherId()).orElse(null);
+            optionalDirs.add(grandFatherDir);
         }
         return optionalDirs.size() >0 ? optionalDirs : null;
     }
@@ -52,13 +56,14 @@ public class DirectoryService {
     public Directory changeDir(Long futureFatherId, Long dirId) {
 
         Directory directory = null;
-        if (directoryRepository.existsById(futureFatherId) && directoryRepository.existsById(dirId)) {
+        if (directoryRepository.findFutureFatherDir(futureFatherId) !=null && directoryRepository.existsById(dirId)) {
             directoryRepository.updateFatherId(futureFatherId, dirId);
             directory = directoryRepository.findByIdAndFatherId(futureFatherId, dirId);
         }
         return directory;
 
     }
+
 
 
     public boolean removeDir(Long dirId) {
