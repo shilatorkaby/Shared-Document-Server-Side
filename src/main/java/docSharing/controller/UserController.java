@@ -21,7 +21,6 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping("/user")
 public class UserController {
-
     @Autowired
     AuthService authService;
 
@@ -122,6 +121,8 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-
-
+    @RequestMapping(value="/delete/{id}")
+    public ResponseEntity<?> deleteUserById(@PathVariable("id") int id){
+        return ResponseEntity.noContent().build();
+    }
 }

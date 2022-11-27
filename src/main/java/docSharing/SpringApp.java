@@ -1,13 +1,12 @@
 package docSharing;
 
-import docSharing.Entities.Directory;
-import docSharing.Entities.DocumentBody;
+import docSharing.Entities.Contender;
+import docSharing.Entities.Document;
 import docSharing.Entities.User;
+import docSharing.Entities.UserRole;
 import docSharing.controller.AuthController;
 import docSharing.controller.UserController;
-import docSharing.repository.DirectoryRepository;
-import docSharing.repository.UserRepository;
-import docSharing.service.DirectoryService;
+import docSharing.service.SharingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,6 +14,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
 
+import java.sql.SQLDataException;
 import java.util.Map;
 
 @SpringBootApplication
@@ -25,38 +25,22 @@ public class SpringApp {
     AuthController authController;
 
     @Autowired
-    DirectoryService directoryService;
-    @Autowired
-    DirectoryRepository directoryRepository;
-    @Autowired
-    UserRepository userRepository;
+    SharingService sharingService;
 
-
-     public static void main(String[] args) {
-
+    public static void main(String[] args) {
         SpringApplication.run(SpringApp.class, args);
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    public void createDoc()
+    public void shareDoc()
     {
-        authController.emailVerification(null);
-//        User user = new User("shillat14@gmail.com","12345");
-//        authController.createUser(user);
-//        ResponseEntity<Map<String, String>> responseEntity = authController.login(user);
+        User user = new User("yudin.david@gmail.com","12345");
+        //authController.createUser(user);
+        ResponseEntity<Map<String, String>> responseEntity = authController.login(user);
+        //userController.createDocument(responseEntity.getBody().get("token"), new Document(user.getEmail(), "third document"));
 
-//        Long rootId = directoryRepository.getRootDir(-1*userRepository.findByEmail(user.getEmail()).getId()).getId();
-//        userController.createDocument(responseEntity.getBody().get("token"), new DocumentBody(rootId, "first document",user.getEmail()));
-//        userController.createNewDir(responseEntity.getBody().get("token"), new Directory(rootId, "first directory"));
-//        userController.createNewDir(responseEntity.getBody().get("token"), new Directory(8L, "second directory"));
+        Contender contender = new Contender(5L, "davidyu@edu.hac.ac.il", null, UserRole.EDITOR);
 
-//        Directory directory = new Directory();
-//        directory.setId(9L);
-//        directory.setFatherId(8L);
-//        ResponseEntity<String> response = userController.getOptionToMove(directory);
-//        System.out.println(response.getBody());
-//        //directory.setFatherId(4L);
-//        //directory.setFatherId(8L);
-//        System.out.println(userController.changeDir(directory).getBody());
+        sharingService.shareViaEmail(contender);
     }
 }
