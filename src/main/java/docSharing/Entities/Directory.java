@@ -1,43 +1,29 @@
 package docSharing.Entities;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 public class Directory {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
     private Long id;
     private Long fatherId;
-    private String dirName;
+    private String name;
+    private Long docId;
 
-    private Long fileId;
-
-    @OneToMany(targetEntity=Directory.class, fetch=FetchType.EAGER)
-    private List<Long> subDirs;
 
     public Directory() {
     }
 
     public Directory(Long fatherId, String dirName) {
         this.fatherId = fatherId;
-        this.dirName = dirName;
+        this.name = dirName;
     }
 
-    public Directory(String dirName) {
-        this.dirName = dirName;
-    }
-
-    public Directory(String dirName, Long fileId) {
-        this.dirName = dirName;
-        this.fileId = fileId;
-    }
-
-    public Directory(Long fatherId, String dirName, Long fileId) {
+    public Directory(Long fatherId, String name, Long fileId) {
         this.fatherId = fatherId;
-        this.dirName = dirName;
-        this.fileId = fileId;
+        this.name = name;
+        this.docId = fileId;
     }
 
     public Long getId() {
@@ -48,6 +34,10 @@ public class Directory {
         this.id = id;
     }
 
+    public void setDocId(Long docId) {
+        this.docId = docId;
+    }
+
     public Long getFatherId() {
         return fatherId;
     }
@@ -56,21 +46,12 @@ public class Directory {
         this.fatherId = fatherId;
     }
 
-    public String getDirName() {
-        return dirName;
+    public String getName() {
+        return name;
     }
 
-    public void setDirName(String subDirs) {
-        this.dirName = dirName;
+    public void setName(String subDirs) {
+        this.name = name;
     }
-
-    public List<Long> getSubDirs() {
-        return subDirs;
-    }
-
-    public void setSubDirs(List<Long> subDirs) {
-        this.subDirs = subDirs;
-    }
-
 
 }

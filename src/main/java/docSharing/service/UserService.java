@@ -13,7 +13,6 @@ import java.util.List;
 
 @Service
 public class UserService {
-    private final String PATH = "src/main/java/docSharing/repository/files/";
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -23,25 +22,18 @@ public class UserService {
     @Autowired
     private DirectoryRepository directoryRepository;
 
-
     public UserService() {
     }
 
-    public Document createDocument(User user, DocBody docBody) {
+    public Document createDocument(User user, DocumentBody documentBody) {
 
 
-        if (!findDoc(user, docBody.document.getFileName())) {
-            Document newDocument = new Document(user.getEmail(), docBody.document.getFileName());
+        if (!findDoc(user, documentBody.getFileName())) {
+            Document newDocument = new Document(user.getEmail(), documentBody.getFileName());
 
             docRepository.save(newDocument);
             docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), "owner"));
-            if(docBody.fatherId!=null)
-            {
-                directoryRepository.save(new Directory(docBody.document.getFileName(), docBody.document.getId()));
-            }
-            else
-                directoryRepository.save(new Directory(docBody.fatherId,docBody.document.getFileName(), docBody.document.getId()));
-
+            directoryRepository.save(new Directory(documentBody.getFatherId(),documentBody.getFileName(),newDocument.getId()));
             return newDocument;
         }
         return null;
@@ -65,5 +57,6 @@ public class UserService {
         }
         return u;
     }
+
 
 }
