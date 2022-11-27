@@ -19,8 +19,6 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping("/user")
 public class UserController {
-
-
     @Autowired
     AuthService authService;
 
@@ -73,6 +71,4 @@ public class UserController {
     public ResponseEntity<?> deleteUserById(@PathVariable("id") int id){
         return ResponseEntity.noContent().build();
     }
-
-
 }

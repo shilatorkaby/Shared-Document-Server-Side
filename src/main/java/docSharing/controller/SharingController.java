@@ -12,17 +12,21 @@ import java.sql.SQLDataException;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/share/via")
 public class SharingController {
 
     @Autowired
     SharingService sharingService;
 
-    @RequestMapping(value="/email", method = RequestMethod.POST)
+    @RequestMapping(value="/share/via/email", method = RequestMethod.POST)
     public ResponseEntity<String> shareViaEmail(@RequestBody Contender contender){
         // we should check if this email valid
-        sharingService.sendmail(contender);
+        sharingService.shareViaEmail(contender);
         return ResponseEntity.ok("All good");
+    }
+
+    @RequestMapping(value = "/accept/email-invite/{token}")
+    public String emailVerification(@PathVariable("token") String token) {
+        return sharingService.verifyToken(token);
     }
 
 }
