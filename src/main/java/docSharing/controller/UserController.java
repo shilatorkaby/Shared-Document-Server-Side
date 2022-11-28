@@ -21,6 +21,7 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping("/user")
 public class UserController {
+
     @Autowired
     AuthService authService;
 
@@ -98,7 +99,6 @@ public class UserController {
             }
         }
         return ResponseEntity.notFound().build();
-
     }
 
 
