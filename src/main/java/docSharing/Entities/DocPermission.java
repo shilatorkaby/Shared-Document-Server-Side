@@ -27,4 +27,33 @@ public class DocPermission {
         return id;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setDocId(Long docId) {
+        this.docId = docId;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "DocPermission{" +
+                "id=" + id +
+                ", docId=" + docId +
+                ", email='" + email + '\'' +
+                ", role=" + role +
+                '}';
+    }
 }
