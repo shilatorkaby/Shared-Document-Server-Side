@@ -34,45 +34,79 @@ class UserControllerTest {
     UserRepository userRepository;
 
     @Test
-    void getSonsByDirId() {
-        Directory directory1 = new Directory(287878L, "fgf");
-        directoryRepository.save(directory1);
-        Directory directory2 = directoryRepository.findByFatherIdAndName(287878L, "fgf");
-        assertEquals(userController.getSonsByDirId(directory2).getStatusCode(), HttpStatus.OK);
+    void getSubDirs_nullDir_statusBadRequest() {
+        assertEquals(userController.getSubDirs(null).getStatusCode(), HttpStatus.BAD_REQUEST);
+    } 
+    
+    @Test
+    void getSubDirs_existDirWithSubDirs_statusOK() {
+
+        directoryRepository.save(new Directory(287878L, "testDir"));
+        Directory directory = directoryRepository.findByFatherIdAndName(287878L, "testDir");
+
+        directoryRepository.save(new Directory(directory.getId(), "subTestDir"));
+        Directory subDirectory = directoryRepository.findByFatherIdAndName(directory.getId(), "subTestDir");
+
+
+        assertEquals(userController.getSubDirs(directory).getStatusCode(), HttpStatus.OK);
+
+        directoryRepository.delete(directory);
+        directoryRepository.delete(subDirectory);
+    }
+    
+    @Test
+    void getSubDirs_existDirWithoutSubDirs_statusNotFound() {
+
+        directoryRepository.save(new Directory(287878L, "testDir"));
+        Directory directory = directoryRepository.findByFatherIdAndName(287878L, "testDir");
+
+        assertEquals(userController.getSubDirs(directory).getStatusCode(), HttpStatus.OK);
+
+        directoryRepository.delete(directory);
     }
 
     @Test
-    void createNewDir() {
-        Directory directory = new Directory(233L, "ggg");
-        directoryRepository.save(directory);
-        User user = new User("ari@gmail.com" , "2222222");
-        userRepository.save(user);
-        userRepository.findByEmail("ari@gmail.com");
-        String token = authController.login(user).getBody().get(0);
-        assertEquals(userController.createNewDir(token, directory).getStatusCode(), HttpStatus.OK);
+    void getSubDirs_notExistDir_statusNotFound() {
+        directoryRepository.save(new Directory(287878L, "testDir"));
+        Directory directory = directoryRepository.findByFatherIdAndName(287878L, "testDir");
+        directoryRepository.delete(directory);
 
-    }
 
-    @Test
-    void createDocument() {
-        Unconfirmed unconfirmed = new Unconfirmed();
-        DocumentBody documentBody = new DocumentBody();
-        assertThat(userController.createDocument(unconfirmed.getToken(), documentBody).getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertEquals(userController.getSubDirs(directory).getStatusCode(), HttpStatus.NOT_FOUND);
     }
-
-    @Test
-    void changeDir() {
-    }
-
-    @Test
-    void removeDir() {
-    }
-
-    @Test
-    void getOptionToMove() {
-    }
-
-    @Test
-    void getAllDocs() {
-    }
+//
+//    @Test
+//    void createNewDir() {
+//        Directory directory = new Directory(233L, "ggg");
+//        directoryRepository.save(directory);
+//        User user = new User("ari@gmail.com" , "2222222");
+//        userRepository.save(user);
+//        userRepository.findByEmail("ari@gmail.com");
+//        String token = authController.login(user).getBody().get(0);
+//        assertEquals(userController.createNewDir(token, directory).getStatusCode(), HttpStatus.OK);
+//
+//    }
+//
+//    @Test
+//    void createDocument() {
+//        Unconfirmed unconfirmed = new Unconfirmed();
+//        DocumentBody documentBody = new DocumentBody();
+//        assertThat(userController.createDocument(unconfirmed.getToken(), documentBody).getStatusCode()).isEqualTo(HttpStatus.OK);
+//    }
+//
+//    @Test
+//    void changeDir() {
+//    }
+//
+//    @Test
+//    void removeDir() {
+//    }
+//
+//    @Test
+//    void getOptionToMove() {
+//    }
+//
+//    @Test
+//    void getAllDocs() {
+//    }
 }

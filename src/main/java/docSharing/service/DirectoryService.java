@@ -32,7 +32,7 @@ public class DirectoryService {
         return optionalDirs.size() > 0 ? optionalDirs : null;
     }
 
-    public List<Directory> getSonsByDirId(Directory directory) {
+    public List<Directory> getSubDirs(Directory directory) {
         if (directoryRepository.existsById(directory.getId())) {
             return directoryRepository.findByFatherId(directory.getId());
         }
