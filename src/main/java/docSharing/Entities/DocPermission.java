@@ -13,6 +13,9 @@ public class DocPermission {
     String email;
     String permission;
 
+    public DocPermission() {
+    }
+
     public DocPermission(Long docId, String email, String permission) {
         this.docId = docId;
         this.email = email;
