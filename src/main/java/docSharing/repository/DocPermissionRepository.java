@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+
 @Repository
 public interface DocPermissionRepository extends JpaRepository<DocPermission, Long> {
 
@@ -18,6 +20,7 @@ public interface DocPermissionRepository extends JpaRepository<DocPermission, Lo
     DocPermission findByDocIdAndEmail(@Param("docId") Long docId, @Param("email") String email);
 
     @Modifying
-    @Query("update DocPermission d set d.role = :role WHERE d.docId = :docId and d.email = :email")
+    @Transactional
+    @Query("UPDATE DocPermission d SET d.role = :role WHERE d.docId = :docId and d.email = :email")
     void updatePermission(@Param("docId") Long docId, @Param("email") String email, @Param("role") UserRole userRole);
 }
