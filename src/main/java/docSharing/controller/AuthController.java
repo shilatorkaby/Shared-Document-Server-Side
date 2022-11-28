@@ -35,8 +35,11 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/verify/{token}")
-    public String emailVerification(@PathVariable("token") String token) {
-        return authService.verifyToken(token);
+    public ResponseEntity<String> emailVerification(@PathVariable("token") String token) {
+        if (token != null) {
+            return ResponseEntity.ok(authService.verifyToken(token));
+        }
+        return ResponseEntity.notFound().build();
     }
 
 

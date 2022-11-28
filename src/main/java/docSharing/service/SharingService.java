@@ -33,7 +33,7 @@ public class SharingService {
 
     public Contender shareViaEmail(Contender contender) {
 
-        if (!isEmailInDatabase(contender.getEmail())) {
+        if (!isEmailInDatabase(contender.getEmail()) || isEmailInDocument(contender.getDocId(), contender.getEmail())) {
             return null;
         }
 
@@ -92,6 +92,7 @@ public class SharingService {
         if (contender != null) {
             contenderRepository.delete(contender);
             docPermissionRepository.save(new DocPermission(contender.getDocId(), contender.getEmail(), contender.getUserRole()));
+
             return "<h1>User successfully joined document</h1>";
         }
 
