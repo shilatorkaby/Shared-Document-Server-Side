@@ -13,6 +13,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
@@ -58,5 +59,9 @@ public class SpringApp {
 //        //directory.setFatherId(4L);
 //        //directory.setFatherId(8L);
 //        System.out.println(userController.changeDir(directory).getBody());
+
+        Directory directory1 = new Directory(-3L,"exm-die");
+        directoryRepository.save(directory1);
+        System.out.println(directoryRepository.existsById(directory1.getId()));
     }
 }
