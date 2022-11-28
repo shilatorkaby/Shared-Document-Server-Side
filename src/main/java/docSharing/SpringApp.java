@@ -1,9 +1,6 @@
 package docSharing;
 
-import docSharing.Entities.Contender;
-import docSharing.Entities.Document;
-import docSharing.Entities.User;
-import docSharing.Entities.UserRole;
+import docSharing.Entities.*;
 import docSharing.controller.AuthController;
 import docSharing.controller.UserController;
 import docSharing.service.SharingService;
@@ -41,11 +38,11 @@ public class SpringApp {
 //        authController.createUser(user);
 
 //        ResponseEntity<Map<String, String>> responseEntity = authController.login(user);
-//        userController.createDocument(responseEntity.getBody().get("token"), new Document(user.getEmail(), "first document"));
-//        userController.createDocument(responseEntity.getBody().get("token"), new Document(user.getEmail(), "second document"));
-//        userController.createDocument(responseEntity.getBody().get("token"), new Document(user.getEmail(), "third document"));
+//        userController.createDocument(responseEntity.getBody().get("token"), new DocumentBody(4L, "first document", user.getEmail()));
+//        userController.createDocument(responseEntity.getBody().get("token"), new DocumentBody(4L, "second document", user.getEmail()));
+//        userController.createDocument(responseEntity.getBody().get("token"), new DocumentBody(4L, "third document", user.getEmail()));
 //
-        Contender contender = new Contender(9L, "davidyu@edu.hac.ac.il", null, UserRole.VIEWER);
+        Contender contender = new Contender(11L, "davidyu@edu.hac.ac.il", null, UserRole.EDITOR);
         sharingService.shareViaEmail(contender);
     }
 }

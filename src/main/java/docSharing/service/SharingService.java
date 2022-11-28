@@ -34,7 +34,7 @@ public class SharingService {
 
     public Contender shareViaEmail(Contender contender) {
 
-        if (!isEmailInDatabase(contender.getEmail()) || isEmailInDocument(contender.getDocId(), contender.getEmail())) {
+        if (!isEmailInDatabase(contender.getEmail())) {
             return null;
         }
 
@@ -73,12 +73,17 @@ public class SharingService {
 
         Contender contender = contenderRepository.findByToken(token);
 
+        if(docPermissionRepository.findByDocIdAndEmail(contender.getDocId(), contender.getEmail()) != null){
+            docPermissionRepository.updatePermission(contender.getDocId(), contender.getEmail(), contender.getUserRole());
+            return "<h1>User successfully updated role</h1>";
+        }
+
         if (contender != null) {
             contenderRepository.delete(contender);
             docPermissionRepository.save(new DocPermission(contender.getDocId(), contender.getEmail(), contender.getUserRole()));
-
             return "<h1>User successfully joined document</h1>";
         }
+
         return "User couldn't join document";
     }
 }
