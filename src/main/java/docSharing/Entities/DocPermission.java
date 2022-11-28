@@ -11,12 +11,16 @@ public class DocPermission {
 
     Long docId;
     String email;
-    String permission;
+    @Enumerated(EnumType.STRING)
+    UserRole role;
 
-    public DocPermission(Long docId, String email, String permission) {
+    public DocPermission() {
+    }
+
+    public DocPermission(Long docId, String email, UserRole role) {
         this.docId = docId;
         this.email = email;
-        this.permission = permission;
+        this.role = role;
     }
 
     public Long getId() {

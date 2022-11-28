@@ -1,5 +1,6 @@
 package docSharing.controller;
 import docSharing.Entities.Document;
+import docSharing.Entities.DocumentLink;
 import docSharing.Entities.User;
 import docSharing.service.AuthService;
 import docSharing.service.UserService;

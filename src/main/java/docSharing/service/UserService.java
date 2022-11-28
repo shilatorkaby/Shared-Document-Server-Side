@@ -1,10 +1,9 @@
 package docSharing.service;
 
-import docSharing.Entities.DocPermission;
-import docSharing.Entities.Document;
-import docSharing.Entities.User;
+import docSharing.Entities.*;
 import docSharing.repository.DocPermissionRepository;
 import docSharing.repository.DocRepository;
+import docSharing.repository.DocumentLinkRepository;
 import docSharing.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,10 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private DocRepository docRepository;
+
+    @Autowired
+    private DocumentLinkRepository documentLinkRepository;
+
     @Autowired
     private DocPermissionRepository docPermissionRepository;
 
@@ -32,19 +35,19 @@ public class UserService {
             Document newDocument = new Document(user.getEmail(), document.getFileName());
 
             docRepository.save(newDocument);
-            docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), "owner"));
+            documentLinkRepository.save(new DocumentLink(newDocument.getId()));
+            docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), UserRole.OWNER));
             return newDocument;
         }
         return null;
     }
 
-    public List<Document> getAllDocs(User user)
-    {
-     return docRepository.findByEmail(user.getEmail());
+    public List<Document> getAllDocs(User user) {
+        return docRepository.findByEmail(user.getEmail());
     }
 
 
-       boolean findDoc(User user, String documentName) {
+    boolean findDoc(User user, String documentName) {
 
         return docRepository.findByNameAndEmail(documentName, user.getEmail()) != null;
     }

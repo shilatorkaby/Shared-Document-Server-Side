@@ -34,13 +34,18 @@ public class SpringApp {
     @EventListener(ApplicationReadyEvent.class)
     public void shareDoc()
     {
-        User user = new User("yudin.david@gmail.com","12345");
-        //authController.createUser(user);
-        ResponseEntity<Map<String, String>> responseEntity = authController.login(user);
-        //userController.createDocument(responseEntity.getBody().get("token"), new Document(user.getEmail(), "third document"));
+//        User user = new User("yudin.david@gmail.com","12345");
+//        authController.createUser(user);
+//
+//        user = new User("davidyu@edu.hac.ac.il","12345");
+//        authController.createUser(user);
 
-        Contender contender = new Contender(5L, "davidyu@edu.hac.ac.il", null, UserRole.EDITOR);
-
+//        ResponseEntity<Map<String, String>> responseEntity = authController.login(user);
+//        userController.createDocument(responseEntity.getBody().get("token"), new Document(user.getEmail(), "first document"));
+//        userController.createDocument(responseEntity.getBody().get("token"), new Document(user.getEmail(), "second document"));
+//        userController.createDocument(responseEntity.getBody().get("token"), new Document(user.getEmail(), "third document"));
+//
+        Contender contender = new Contender(9L, "davidyu@edu.hac.ac.il", null, UserRole.VIEWER);
         sharingService.shareViaEmail(contender);
     }
 }
