@@ -33,14 +33,17 @@ public class UserController {
     private static final Gson gson = new Gson();
 
     @RequestMapping(value = "get/subFolders", method = RequestMethod.GET)
-    public ResponseEntity<String> getSonsByDirId(@RequestBody Directory directory) {
+    public ResponseEntity<String> getSubDirs(@RequestBody Directory directory) {
         if (directory != null) {
-            List<Directory> subFolders = directoryService.getSonsByDirId(directory);
+            List<Directory> subFolders = directoryService.getSubDirs(directory);
             if (subFolders != null) {
                 return ResponseEntity.ok(gson.toJson(subFolders));
             }
+            else
+                return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.badRequest().build();
+
     }
 
     @RequestMapping(value = "add/new/dir", method = RequestMethod.POST)

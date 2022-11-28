@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class AuthControllerTest {
@@ -18,46 +18,46 @@ class AuthControllerTest {
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    AuthService authService;
 
     @Test
-    void createUser() {
+    void createUser_addLegalUser_statusOK() {
         User a = new User("arielosh8@gmail.com","123123");
         assertEquals(authController.createUser(a).getStatusCode() , HttpStatus.OK);
         userRepository.delete(a);
     }
 
     @Test
-    void createUser_Failed() {
-        User a = new User("arielosh98@gmail.com","123123");
-        assertEquals(authController.createUser(a).getStatusCode() , HttpStatus.BAD_REQUEST);
+    void createUser_addExistUser_statusOK() {
+        User user = new User("arielosh98@gmail.com","123123");
+        userRepository.save(user);
+        assertEquals(authController.createUser(user).getStatusCode() , HttpStatus.BAD_REQUEST);
+        userRepository.delete(user);
     }
 
     @Test
-    void emailVerification() {
+    void emailVerification_verifiedToken_statusOK() {
         Unconfirmed unconfirmed = new Unconfirmed();
         assertEquals(authController.emailVerification(unconfirmed.getToken()).getStatusCode() , HttpStatus.OK);
     }
 
     @Test
-    void emailVerification_Failed() {
+    void emailVerification_nullToken_statusNotFound() {
         String token = null;
-        assertEquals(authController.emailVerification(token).getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(authController.emailVerification(null).getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
     @Test
-    void login() {
-        User user = new User("sh98@gmail.com","123123");
-        userRepository.save(user);
-        String token = authService.login(user);
-        assertEquals(authController.login(user).getStatusCode(), HttpStatus.OK);
-    }
-
-    @Test
-    void login_failed() {
+    void login_loginWithRegisteredUser_statusOK() {
         User user = new User("98@gmail.com","123123");
-        String token = authService.login(user);
+        userRepository.save(user);
+        assertEquals(authController.login(user).getStatusCode(), HttpStatus.OK);
+        userRepository.delete(user);
+    }
+
+    @Test
+    void login_loginWithUnRegisteredUser_statusOK() {
+        User user = new User("98@gmail.com","123123");
         assertEquals(authController.login(user).getStatusCode(), HttpStatus.NOT_FOUND);
+
     }
 }
