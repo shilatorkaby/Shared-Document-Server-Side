@@ -12,9 +12,8 @@ public class Contender {
 
     Long docId;
     String email;
-
     String token;
-
+    @Enumerated(EnumType.STRING)
     UserRole userRole;
 
     public Contender() {

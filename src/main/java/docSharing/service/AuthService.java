@@ -7,6 +7,7 @@ import docSharing.repository.DirectoryRepository;
 import docSharing.repository.UserRepository;
 import docSharing.repository.UnconfirmedRepository;
 import docSharing.utils.Email;
+import docSharing.utils.Token;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +86,7 @@ public class AuthService {
     public String login(User user) {
 
         if (authenticateLogin(user)) {
-            String token = Unconfirmed.generateNewToken();
+            String token = Token.generate();
             cachedUsers.put(token, user);
             return token;
         }

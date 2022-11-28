@@ -1,7 +1,7 @@
 package docSharing.Entities;
+import docSharing.utils.Token;
+
 import javax.persistence.*;
-import java.security.SecureRandom;
-import java.util.Base64;
 
 @Entity
 public class Unconfirmed {
@@ -21,20 +21,15 @@ public class Unconfirmed {
     }
 
     public Unconfirmed() {
-        this.token = generateNewToken();
+        this.token = Token.generate();
     }
 
     public Unconfirmed(String email, String password) {
-        this.token = generateNewToken();
+        this.token = Token.generate();
         this.email = email;
         this.password = password;
     }
 
-    public static String generateNewToken() {
-        byte[] randomBytes = new byte[24];
-        new SecureRandom().nextBytes(randomBytes);
-        return Base64.getUrlEncoder().encodeToString(randomBytes);
-    }
 
     public String getEmail() {
         return email;

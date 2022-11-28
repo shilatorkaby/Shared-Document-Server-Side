@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import docSharing.Entities.Directory;
 import docSharing.Entities.DocumentBody;
 import docSharing.Entities.Document;
+import docSharing.Entities.DocumentLink;
 import docSharing.Entities.User;
 import docSharing.service.AuthService;
 import docSharing.service.DirectoryService;
