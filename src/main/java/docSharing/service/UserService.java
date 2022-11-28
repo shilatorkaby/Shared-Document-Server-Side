@@ -1,15 +1,9 @@
 package docSharing.service;
 
 import docSharing.Entities.*;
-import docSharing.Entities.*;
-import docSharing.repository.DirectoryRepository;
-import docSharing.repository.DocPermissionRepository;
-import docSharing.repository.DocRepository;
-import docSharing.repository.DocumentLinkRepository;
-import docSharing.repository.UserRepository;
+import docSharing.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.sql.SQLDataException;
 import java.util.List;
 
@@ -19,10 +13,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private DocRepository docRepository;
-
     @Autowired
     private DocumentLinkRepository documentLinkRepository;
-
     @Autowired
     private DocPermissionRepository docPermissionRepository;
     @Autowired
@@ -40,7 +32,7 @@ public class UserService {
             docRepository.save(newDocument);
             documentLinkRepository.save(new DocumentLink(newDocument.getId()));
             docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), UserRole.OWNER));
-            directoryRepository.save(new Directory(documentBody.getFatherId(),documentBody.getFileName(),newDocument.getId()));
+            directoryRepository.save(new Directory(documentBody.getFatherId(), documentBody.getFileName(), newDocument.getId()));
             return newDocument;
         }
         return null;

@@ -3,9 +3,8 @@ package docSharing.controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import docSharing.Entities.Directory;
-import docSharing.Entities.DocumentBody;
 import docSharing.Entities.Document;
-import docSharing.Entities.DocumentLink;
+import docSharing.Entities.DocumentBody;
 import docSharing.Entities.User;
 import docSharing.service.AuthService;
 import docSharing.service.DirectoryService;
@@ -34,7 +33,7 @@ public class UserController {
 
     @RequestMapping(value = "get/subFolders", method = RequestMethod.GET)
     public ResponseEntity<String> getSonsByDirId(@RequestBody Directory directory) {
-        if(directory != null) {
+        if (directory != null) {
             List<Directory> subFolders = directoryService.getSonsByDirId(directory);
             if (subFolders != null) {
                 return ResponseEntity.ok(gson.toJson(subFolders));
@@ -42,11 +41,12 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
+
     @RequestMapping(value = "add/new/dir", method = RequestMethod.POST)
-    public ResponseEntity<String> createNewDir(@RequestHeader ("token") String token,@RequestBody Directory directory) {
+    public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
         User user = authService.getCachedUser(token);
 
-        if(user != null && directory != null) {
+        if (user != null && directory != null) {
             Directory newDir = directoryService.addNewDir(directory);
             if (newDir != null) {
                 return ResponseEntity.ok(gson.toJson(newDir));
@@ -55,14 +55,14 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @RequestMapping(value="/create", method = RequestMethod.POST)
-    public ResponseEntity<String> createDocument(@RequestHeader ("token") String token, @RequestBody DocumentBody document){
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public ResponseEntity<String> createDocument(@RequestHeader("token") String token, @RequestBody DocumentBody document) {
 
         User user = authService.getCachedUser(token);
 
-        if(user != null){
+        if (user != null) {
             Document temp = userService.createDocument(user, document);
-            if(temp != null)
+            if (temp != null)
                 return ResponseEntity.ok(temp.toString());
         }
         return ResponseEntity.notFound().build();
@@ -70,17 +70,18 @@ public class UserController {
 
     @RequestMapping(value = "change/dir", method = RequestMethod.POST)
     public ResponseEntity<String> changeDir(@RequestBody Directory directory) {
-        if(directory != null && directory.getFatherId() != null) {
-            Directory changedDir = directoryService.changeDir(directory.getFatherId(),directory.getId());
+        if (directory != null && directory.getFatherId() != null) {
+            Directory changedDir = directoryService.changeDir(directory.getFatherId(), directory.getId());
             if (changedDir != null) {
                 return ResponseEntity.ok(gson.toJson(changedDir));
             }
         }
         return ResponseEntity.notFound().build();
     }
+
     @RequestMapping(value = "delete/dir", method = RequestMethod.POST)
     public ResponseEntity<String> removeDir(@RequestBody Directory directory) {
-        if(directory != null) {
+        if (directory != null) {
             if (directoryService.removeDir(directory.getId())) {
                 return ResponseEntity.ok("Directory was deleted successfully");
             }
@@ -90,7 +91,7 @@ public class UserController {
 
     @RequestMapping(value = "get/optional/dir", method = RequestMethod.GET)
     public ResponseEntity<String> getOptionToMove(@RequestBody Directory directory) {
-        if(directory != null) {
+        if (directory != null) {
             List<Directory> optionalFolders = directoryService.getOptionToMove(directory);
             if (optionalFolders != null) {
                 return ResponseEntity.ok(gson.toJson(optionalFolders));
@@ -101,10 +102,8 @@ public class UserController {
     }
 
 
-
-
-    @RequestMapping(value="/get/docs", method = RequestMethod.POST)
-    public ResponseEntity<String> getAllDocs(@RequestBody String json){
+    @RequestMapping(value = "/get/docs", method = RequestMethod.POST)
+    public ResponseEntity<String> getAllDocs(@RequestBody String json) {
 
         Gson gson = new Gson();
         Map<String, String> map = gson.fromJson(json, HashMap.class);
@@ -114,16 +113,16 @@ public class UserController {
         gson = new GsonBuilder().setPrettyPrinting().create();
         User user = authService.getCachedUser(token);
 
-        if(user != null){
+        if (user != null) {
             String docs = gson.toJson(userService.getAllDocs(user));
-            if(docs != null)
+            if (docs != null)
                 return ResponseEntity.ok(docs);
         }
         return ResponseEntity.notFound().build();
     }
 
-    @RequestMapping(value="/delete/{id}")
-    public ResponseEntity<?> deleteUserById(@PathVariable("id") int id){
+    @RequestMapping(value = "/delete/{id}")
+    public ResponseEntity<?> deleteUserById(@PathVariable("id") int id) {
         return ResponseEntity.noContent().build();
     }
 }

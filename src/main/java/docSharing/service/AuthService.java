@@ -1,22 +1,20 @@
 package docSharing.service;
 
 import docSharing.Entities.Directory;
-import docSharing.Entities.User;
 import docSharing.Entities.Unconfirmed;
+import docSharing.Entities.User;
 import docSharing.repository.DirectoryRepository;
-import docSharing.repository.UserRepository;
 import docSharing.repository.UnconfirmedRepository;
+import docSharing.repository.UserRepository;
 import docSharing.utils.Email;
 import docSharing.utils.Token;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-
-import java.util.*;
+import java.util.HashMap;
 
 @Service
 public class AuthService {
@@ -77,7 +75,7 @@ public class AuthService {
             unconfirmedRepository.delete(unconfirmed);
             User user = new User(unconfirmed.getEmail(), unconfirmed.getPassword());
             userRepository.save(user);
-            directoryRepository.save(new Directory(user.getId()*-1,"root"));
+            directoryRepository.save(new Directory(user.getId() * -1, "root"));
             return "<h1>Email verification was done successfully</h1>";
         }
         return "You need to sign up first";
@@ -103,7 +101,8 @@ public class AuthService {
         return (userRepository.findByEmail(email) != null);
     }
 
-    public User getCachedUser(String token){
+    public User getCachedUser(String token) {
         return cachedUsers.get(token);
     }
 }
+
