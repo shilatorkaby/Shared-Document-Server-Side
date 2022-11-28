@@ -22,7 +22,6 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController {
 
-
     @Autowired
     AuthService authService;
 
@@ -98,10 +97,7 @@ public class UserController {
             }
         }
         return ResponseEntity.notFound().build();
-
     }
-
-
 
 
     @RequestMapping(value="/get/docs", method = RequestMethod.POST)
@@ -122,7 +118,4 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
-
-
-
 }

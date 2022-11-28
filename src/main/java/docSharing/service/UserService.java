@@ -1,10 +1,7 @@
 package docSharing.service;
 
 import docSharing.Entities.*;
-import docSharing.repository.DirectoryRepository;
-import docSharing.repository.DocPermissionRepository;
-import docSharing.repository.DocRepository;
-import docSharing.repository.UserRepository;
+import docSharing.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +10,15 @@ import java.util.List;
 
 @Service
 public class UserService {
+    private final String PATH = "src/main/java/docSharing/repository/files/";
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private DocRepository docRepository;
+
+    @Autowired
+    private DocumentLinkRepository documentLinkRepository;
+
     @Autowired
     private DocPermissionRepository docPermissionRepository;
     @Autowired
@@ -32,7 +34,8 @@ public class UserService {
             Document newDocument = new Document(user.getEmail(), documentBody.getFileName());
 
             docRepository.save(newDocument);
-            docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), "owner"));
+            documentLinkRepository.save(new DocumentLink(newDocument.getId()));
+            docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), UserRole.OWNER));
             directoryRepository.save(new Directory(documentBody.getFatherId(),documentBody.getFileName(),newDocument.getId()));
             return newDocument;
         }
@@ -57,6 +60,5 @@ public class UserService {
         }
         return u;
     }
-
 
 }
