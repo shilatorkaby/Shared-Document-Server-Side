@@ -10,8 +10,10 @@ import docSharing.utils.Email;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
 
 import java.util.*;
 
@@ -19,7 +21,7 @@ import java.util.*;
 public class AuthService {
 
     // users that did a valid login
-    HashMap<String, User> cachedUsers = new HashMap<>();
+    public HashMap<String, User> cachedUsers = new HashMap<>();
 
     @Autowired
     private JavaMailSender mailSender;

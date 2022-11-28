@@ -22,7 +22,6 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController {
 
-
     @Autowired
     AuthService authService;
 

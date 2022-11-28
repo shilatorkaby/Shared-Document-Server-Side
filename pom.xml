@@ -11,6 +11,12 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>2.7.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
             <version>2.7.5</version>
         </dependency>
@@ -23,7 +29,7 @@
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
+            <version>2.4.0-b180830.0359</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -31,13 +37,6 @@
             <version>5.9.0</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>3.21.0</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -63,18 +62,6 @@
                 <artifactId>hibernate-types-55</artifactId>
                 <version>2.20.0</version>
             </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>RELEASE</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
