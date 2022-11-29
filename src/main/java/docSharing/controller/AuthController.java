@@ -45,14 +45,16 @@ public class AuthController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
-        validation.isValidEmail(user.getEmail());
-        validation.isValidPassword(user.getPassword());
-        String token = authService.login(user);
+        if (user != null) {
+            validation.isValidEmail(user.getEmail());
+            validation.isValidPassword(user.getPassword());
+            String token = authService.login(user);
 
-        if (token != null) {
-            Map<String, String> map = new HashMap<>();
-            map.put("token", token);
-            return ResponseEntity.ok(map);
+            if (token != null) {
+                Map<String, String> map = new HashMap<>();
+                map.put("token", token);
+                return ResponseEntity.ok(map);
+            }
         }
         return ResponseEntity.notFound().build();
     }

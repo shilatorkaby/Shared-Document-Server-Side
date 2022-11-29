@@ -26,7 +26,7 @@ public class UserService {
     public Document createDocument(User user, DocumentBody documentBody) {
 
 
-        if (!findDoc(user, documentBody.getFileName())) {
+        if (documentBody != null && !findDoc(user, documentBody.getFileName())) {
             Document newDocument = new Document(user.getEmail(), documentBody.getFileName());
 
             docRepository.save(newDocument);
