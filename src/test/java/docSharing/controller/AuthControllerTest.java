@@ -27,7 +27,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void createUser_addExistUser_statusOK() {
+    void createUser_addExistUser_BadRequest() {
         User user = new User("arielosh98@gmail.com","123123");
         userRepository.save(user);
         assertEquals(authController.createUser(user).getStatusCode() , HttpStatus.BAD_REQUEST);

@@ -29,6 +29,12 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
      @Transactional
      @Query("UPDATE Directory d set d.fatherId = :fatherId WHERE d.id = :id")
      void updateFatherId(@Param("fatherId") Long fatherId,@Param("id") Long id);
+     @Modifying
+     @Transactional
+     @Query("DELETE from Directory d where d.name = :name")
+     void deleteByName(@Param("name") String name);
+
+
 
 
 

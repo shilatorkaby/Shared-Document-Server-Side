@@ -33,8 +33,10 @@ public class UserController {
     private static final Gson gson = new Gson();
 
     @RequestMapping(value = "get/subFolders", method = RequestMethod.GET)
-    public ResponseEntity<String> getSubDirs(@RequestBody Directory directory) {
-        if (directory != null) {
+    public ResponseEntity<String> getSubDirs(@RequestHeader("token") String token,@RequestBody Directory directory) {
+        User user = authService.getCachedUser(token);
+
+        if (user != null && directory != null) {
             List<Directory> subFolders = directoryService.getSubDirs(directory);
             if (subFolders != null) {
                 return ResponseEntity.ok(gson.toJson(subFolders));
@@ -43,6 +45,7 @@ public class UserController {
                 return ResponseEntity.notFound().build();
         }
         return ResponseEntity.badRequest().build();
+
     }
 
     @RequestMapping(value = "/create-directory", method = RequestMethod.POST)
@@ -61,23 +64,20 @@ public class UserController {
     @RequestMapping(value = "/create-document", method = RequestMethod.POST)
     public ResponseEntity<String> createDocument(@RequestHeader("token") String token, @RequestBody DocumentBody document) {
 
-        System.out.println(token);
-        System.out.println(document);
-
         User user = authService.getCachedUser(token);
 
         if (user != null) {
             Document temp = userService.createDocument(user, document);
             if (temp != null)
-                return ResponseEntity.ok(temp.toString());
+                return ResponseEntity.ok(gson.toJson(temp));
         }
         return ResponseEntity.notFound().build();
     }
 
     @RequestMapping(value = "change/dir", method = RequestMethod.POST)
-    public ResponseEntity<String> changeDir(@RequestBody Directory directory) {
-        if (directory != null && directory.getFatherId() != null) {
-            Directory changedDir = directoryService.changeDir(directory.getFatherId(), directory.getId());
+    public ResponseEntity<String> changeDir(@RequestHeader("token") String token,@RequestBody Directory directory) {
+        if (authService.getCachedUser(token) != null && directory != null) {
+            Directory changedDir = directoryService.changeDir(directory);
             if (changedDir != null) {
                 return ResponseEntity.ok(gson.toJson(changedDir));
             }
@@ -86,9 +86,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "delete/dir", method = RequestMethod.POST)
-    public ResponseEntity<String> removeDir(@RequestBody Directory directory) {
-        if (directory != null) {
-            if (directoryService.removeDir(directory.getId())) {
+    public ResponseEntity<String> removeDir(@RequestHeader("token") String token,@RequestBody Directory directory) {
+        if (authService.getCachedUser(token) != null && directory != null) {
+            if (!directoryService.removeDir(directory.getId())) {
                 return ResponseEntity.ok("Directory was deleted successfully");
             }
         }
@@ -96,8 +96,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "get/optional/dir", method = RequestMethod.GET)
-    public ResponseEntity<String> getOptionToMove(@RequestBody Directory directory) {
-        if (directory != null) {
+    public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token,@RequestBody Directory directory) {
+        if (authService.getCachedUser(token) != null && directory != null) {
             List<Directory> optionalFolders = directoryService.getOptionToMove(directory);
             if (optionalFolders != null) {
                 return ResponseEntity.ok(gson.toJson(optionalFolders));
@@ -118,10 +118,5 @@ public class UserController {
                 return ResponseEntity.ok(docs);
         }
         return ResponseEntity.notFound().build();
-    }
-
-    @RequestMapping(value = "/delete/{id}")
-    public ResponseEntity<?> deleteUserById(@PathVariable("id") int id) {
-        return ResponseEntity.noContent().build();
     }
 }

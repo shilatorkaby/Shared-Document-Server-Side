@@ -26,10 +26,26 @@ public class DirectoryService {
         }
         Directory fatherDir = directoryRepository.findById(directory.getFatherId()).orElse(null);
         if (fatherDir != null && fatherDir.getFatherId() > 0) {
-            Directory grandFatherDir = directoryRepository.findById(fatherDir.getFatherId()).orElse(null);
-            optionalDirs.add(grandFatherDir);
+            directoryRepository.findById(fatherDir.getFatherId()).ifPresent(optionalDirs::add);
         }
         return optionalDirs.size() > 0 ? optionalDirs : null;
+    }
+
+    public Directory changeDir(Directory directory) {
+
+        Directory currentDirectory = directoryRepository.findById(directory.getId()).orElse(null);
+        Directory futureFatherDirectory = directoryRepository.findById(directory.getFatherId()).orElse(null);
+
+        if (currentDirectory != null && futureFatherDirectory != null) {
+
+            List<Directory> futureFatherOptions = getOptionToMove(currentDirectory);
+            boolean futureFatherDirIsExist = futureFatherOptions.stream().anyMatch(o -> o.getId().equals(futureFatherDirectory.getId()));
+
+            if (futureFatherDirIsExist) {
+                directoryRepository.updateFatherId(directory.getFatherId(), directory.getId());
+            }
+        }
+        return directoryRepository.findByFatherIdAndName(directory.getFatherId(), directory.getName());
     }
 
     public List<Directory> getSubDirs(Directory directory) {
@@ -49,18 +65,6 @@ public class DirectoryService {
             return newDir;
         }
         return null;
-    }
-
-
-    public Directory changeDir(Long futureFatherId, Long dirId) {
-
-        Directory directory = null;
-        if (directoryRepository.findFutureFatherDir(futureFatherId) != null && directoryRepository.existsById(dirId)) {
-
-            directoryRepository.updateFatherId(futureFatherId, dirId);
-            directory = directoryRepository.findByIdAndFatherId(futureFatherId, dirId);
-        }
-        return directory;
     }
 
 
