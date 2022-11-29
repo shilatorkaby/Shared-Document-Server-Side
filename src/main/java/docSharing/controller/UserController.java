@@ -24,12 +24,13 @@ public class UserController {
 
     @Autowired
     AuthService authService;
+
     @Autowired
     UserService userService;
+
     @Autowired
     private DirectoryService directoryService;
     private static final Gson gson = new Gson();
-
 
     @RequestMapping(value = "get/subFolders", method = RequestMethod.GET)
     public ResponseEntity<String> getSubDirs(@RequestHeader("token") String token,@RequestBody Directory directory) {
@@ -47,9 +48,8 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "add/new/dir", method = RequestMethod.POST)
+    @RequestMapping(value = "/create-directory", method = RequestMethod.POST)
     public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
-
         User user = authService.getCachedUser(token);
 
         if (user != null && directory != null) {
@@ -61,9 +61,8 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/create-document", method = RequestMethod.POST)
     public ResponseEntity<String> createDocument(@RequestHeader("token") String token, @RequestBody DocumentBody document) {
-
 
         User user = authService.getCachedUser(token);
 
@@ -107,8 +106,9 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
+
     @RequestMapping(value = "/get/docs", method = RequestMethod.POST)
-    public ResponseEntity<String> getAllDocs(@RequestHeader("token") String token) {
+        public ResponseEntity<String> getAllDocs(@RequestHeader("token") String token) {
 
         User user = authService.getCachedUser(token);
 
@@ -119,5 +119,4 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
-
 }
