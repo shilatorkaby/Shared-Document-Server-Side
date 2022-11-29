@@ -48,6 +48,7 @@ public class UserController {
 
     @RequestMapping(value = "add/new/dir", method = RequestMethod.POST)
     public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
+
         User user = authService.getCachedUser(token);
 
         if (user != null && directory != null) {
@@ -62,12 +63,13 @@ public class UserController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<String> createDocument(@RequestHeader("token") String token, @RequestBody DocumentBody document) {
 
+
         User user = authService.getCachedUser(token);
 
         if (user != null) {
             Document temp = userService.createDocument(user, document);
             if (temp != null)
-                return ResponseEntity.ok(temp.toString());
+                return ResponseEntity.ok(gson.toJson(temp));
         }
         return ResponseEntity.notFound().build();
     }
