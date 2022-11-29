@@ -6,14 +6,13 @@ import docSharing.Entities.Document;
 import docSharing.Entities.DocumentBody;
 import docSharing.Entities.User;
 import docSharing.repository.*;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @SpringBootTest
 class UserControllerTest {
     @Autowired
@@ -37,13 +36,28 @@ class UserControllerTest {
     DocRepository docRepository;
 
     private static final Gson gson = new Gson();
+    String token;
+
+    @BeforeEach
+    void getToken() {
+        userRepository.save(new User("testUser@gmail.com", "2222222"));
+        token = authController.login(userRepository.findByEmail("testUser@gmail.com")).getBody().get("token");
+
+        directoryRepository.deleteByName("testDir");
+    }
+
+    @AfterEach
+    void deleteUser()
+    {
+        userRepository.delete(userRepository.findByEmail("testUser@gmail.com"));
+    }
 
 
     /*=================================== get Sub Directories ====================================================================*/
 
     @Test
     void getSubDirs_nullDir_statusBadRequest() {
-        assertEquals(userController.getSubDirs(null).getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(userController.getSubDirs(token,null).getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 
     @Test
@@ -56,7 +70,7 @@ class UserControllerTest {
         Directory subDirectory = directoryRepository.findByFatherIdAndName(directory.getId(), "subTestDir");
 
 
-        assertEquals(userController.getSubDirs(directory).getStatusCode(), HttpStatus.OK);
+        assertEquals(userController.getSubDirs(token, directory).getStatusCode(), HttpStatus.OK);
 
         directoryRepository.delete(directory);
         directoryRepository.delete(subDirectory);
@@ -68,7 +82,7 @@ class UserControllerTest {
         directoryRepository.save(new Directory(287878L, "testDir"));
         Directory directory = directoryRepository.findByFatherIdAndName(287878L, "testDir");
 
-        assertEquals(userController.getSubDirs(directory).getStatusCode(), HttpStatus.OK);
+        assertEquals(userController.getSubDirs(token, directory).getStatusCode(), HttpStatus.OK);
 
         directoryRepository.delete(directory);
     }
@@ -80,7 +94,7 @@ class UserControllerTest {
         directoryRepository.delete(directory);
 
 
-        assertEquals(userController.getSubDirs(directory).getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(userController.getSubDirs(token, directory).getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
     /*=================================== create new directory ====================================================================*/
@@ -88,25 +102,11 @@ class UserControllerTest {
     @Test
     void createNewDir_nullDirectory_NotFoundResponse() {
 
-        userRepository.save(new User("testUser@gmail.com", "2222222"));
-        User user = userRepository.findByEmail("testUser@gmail.com");
-
-        String token = authController.login(user).getBody().get("token");
-        userRepository.delete(user);
-
         assertEquals(userController.createNewDir(token, null).getStatusCode(), HttpStatus.NOT_FOUND);
-
     }
 
     @Test
     void createNewDir_newDirectory_ResponseOK() {
-
-        userRepository.save(new User("testUser@gmail.com", "2222222"));
-        User user = userRepository.findByEmail("testUser@gmail.com");
-
-        String token = authController.login(user).getBody().get("token");
-        userRepository.delete(user);
-
 
         directoryRepository.save(new Directory(287878L, "testDir"));
         Directory directory = directoryRepository.findByFatherIdAndName(287878L, "testDir");
@@ -122,12 +122,6 @@ class UserControllerTest {
 
     @Test
     void createNewDir_existDirectory_NotFoundResponse() {
-
-        userRepository.save(new User("testUser@gmail.com", "2222222"));
-        User user = userRepository.findByEmail("testUser@gmail.com");
-
-        String token = authController.login(user).getBody().get("token");
-        userRepository.delete(user);
 
         directoryRepository.save(new Directory(287878L, "testDir"));
         Directory directory = directoryRepository.findByFatherIdAndName(287878L, "testDir");
@@ -170,23 +164,13 @@ class UserControllerTest {
     @Test
     void createDocument_nullDocument_NotFoundResponse() {
 
-        userRepository.save(new User("testUser@gmail.com", "2222222"));
-        User user = userRepository.findByEmail("testUser@gmail.com");
-
-        String token = authController.login(user).getBody().get("token");
-        userRepository.delete(user);
-
         assertEquals(userController.createDocument(token, null).getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
     @Test
     void createDocument_newDocument_ResponseOK() {
 
-        userRepository.save(new User("testUser@gmail.com", "2222222"));
         User user = userRepository.findByEmail("testUser@gmail.com");
-
-        String token = authController.login(user).getBody().get("token");
-        userRepository.delete(user);
 
         ResponseEntity<String> response = userController.createDocument(token, new DocumentBody(123648L, "newDoc", user.getEmail()));
         Document newDocument = gson.fromJson(response.getBody(), Document.class);
@@ -203,11 +187,7 @@ class UserControllerTest {
     @Test
     void createDocument_existDocument_NotFoundResponse() {
 
-        userRepository.save(new User("testUser@gmail.com", "2222222"));
         User user = userRepository.findByEmail("testUser@gmail.com");
-
-        String token = authController.login(user).getBody().get("token");
-        userRepository.delete(user);
 
         docRepository.save(new Document(user.getEmail(), "testDoc"));
         Document document = docRepository.findByNameAndEmail("testDoc", user.getEmail());
@@ -235,6 +215,119 @@ class UserControllerTest {
 
     }
 
+    /*=================================== change directory ====================================================================*/
+
+    @Test
+    void changeDir_nullDirectory_NotFoundResponse() {
+    assertEquals(userController.changeDir(token, null).getStatusCode(), HttpStatus.NOT_FOUND);
+    }
+    @Test
+    void changeDir_notExistDirectory_NotFoundResponse() {
+
+        directoryRepository.save(new Directory(28878L, "testDir"));
+        Directory directory = directoryRepository.findByFatherIdAndName(28878L, "testDir");
+        directoryRepository.delete(directory);
+
+        ResponseEntity<String> response = userController.changeDir(token, directory);
+
+        assertEquals(response.getStatusCode(),HttpStatus.NOT_FOUND);
+    }
+    @Test
+    void changeDir_existDirectory_OKResponse() {
+        directoryRepository.save(new Directory(4521L,"tempRootDir"));
+        Directory tempRootDir = directoryRepository.findByFatherIdAndName(4521L, "tempRootDir");
+
+        directoryRepository.save(new Directory(tempRootDir.getId(), "futureFatherDir"));
+        Directory futureFatherDir = directoryRepository.findByFatherIdAndName(tempRootDir.getId(), "futureFatherDir");
+
+        directoryRepository.save(new Directory(tempRootDir.getId(), "currentDir"));
+        Directory directory = directoryRepository.findByFatherIdAndName(tempRootDir.getId(), "currentDir");
+
+        directory.setFatherId(futureFatherDir.getId());
+        ResponseEntity<String> response = userController.changeDir(token, directory);
+
+        directoryRepository.delete(tempRootDir);
+        directoryRepository.delete(futureFatherDir);
+        directoryRepository.delete(directory);
+
+        assertEquals(response.getStatusCode(),HttpStatus.OK);
+    }
+
+
+    /*=================================== remove directory ====================================================================*/
+
+    @Test
+    void removeDir_nullDir_NotFoundResponse()
+    {
+        assertEquals(userController.removeDir(token,null).getStatusCode(),HttpStatus.NOT_FOUND);
+    }
+    @Test
+    void removeDir_notExistDir_NotFoundResponse()
+    {
+        directoryRepository.save(new Directory(28878L, "testDir"));
+        Directory directory = directoryRepository.findByFatherIdAndName(28878L, "testDir");
+        directoryRepository.delete(directory);
+
+        assertEquals(userController.removeDir(token,directory).getStatusCode(),HttpStatus.NOT_FOUND);
+    }
+    @Test
+    void removeDir_existDir_OKResponse()
+    {
+        directoryRepository.save(new Directory(28878L, "testDir"));
+        Directory directory = directoryRepository.findByFatherIdAndName(28878L, "testDir");
+        assertEquals(userController.removeDir(token,directory).getStatusCode(),HttpStatus.OK);
+    }
+
+    /*=================================== get options to move ====================================================================*/
+
+    @Test
+    void getOptionToMove_nullDirectory_NotFoundResponse()
+    {
+        assertEquals(userController.getOptionToMove(token,null).getStatusCode(),HttpStatus.NOT_FOUND);
+    }
+    @Test
+    void getOptionToMove_notExistDirectory_NotFoundResponse()
+    {
+        directoryRepository.save(new Directory(28878L, "testDir"));
+        Directory directory = directoryRepository.findByFatherIdAndName(28878L, "testDir");
+        directoryRepository.delete(directory);
+
+        ResponseEntity<String> response = userController.getOptionToMove(token, directory);
+
+        assertEquals(response.getStatusCode(),HttpStatus.NOT_FOUND);
+
+    }
+    @Test
+    void getOptionToMove_existDirectoryWithoutOptions_notFoundResponse()
+    {
+        directoryRepository.save(new Directory(28878L, "testDir"));
+        Directory directory = directoryRepository.findByFatherIdAndName(28878L, "testDir");
+
+        ResponseEntity<String> response = userController.getOptionToMove(token, directory);
+        directoryRepository.delete(directory);
+
+        assertEquals(response.getStatusCode(),HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void getOptionToMove_ExistDirectoryWithOption_OKResponse()
+    {
+        directoryRepository.save(new Directory(28878L, "testDir"));
+        Directory directory = directoryRepository.findByFatherIdAndName(28878L, "testDir");
+
+        directoryRepository.save(new Directory(directory.getId(), "testSubDir"));
+        Directory subDirectory = directoryRepository.findByFatherIdAndName(directory.getId(), "testSubDir");
+
+        ResponseEntity<String> response = userController.getOptionToMove(token, subDirectory);
+        directoryRepository.delete(directory);
+        directoryRepository.delete(subDirectory);
+
+        assertEquals(response.getStatusCode(),HttpStatus.OK);
+    }
+
+
+
+    /*=================================== remove directory ====================================================================*/
 
 
 }
