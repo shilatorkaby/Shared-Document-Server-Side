@@ -43,10 +43,9 @@ public class UserController {
                 return ResponseEntity.notFound().build();
         }
         return ResponseEntity.badRequest().build();
-
     }
 
-    @RequestMapping(value = "add/new/dir", method = RequestMethod.POST)
+    @RequestMapping(value = "/create-directory", method = RequestMethod.POST)
     public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
         User user = authService.getCachedUser(token);
 
@@ -59,8 +58,11 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/create-document", method = RequestMethod.POST)
     public ResponseEntity<String> createDocument(@RequestHeader("token") String token, @RequestBody DocumentBody document) {
+
+        System.out.println(token);
+        System.out.println(document);
 
         User user = authService.getCachedUser(token);
 
@@ -106,14 +108,8 @@ public class UserController {
 
 
     @RequestMapping(value = "/get/docs", method = RequestMethod.POST)
-    public ResponseEntity<String> getAllDocs(@RequestBody String json) {
+        public ResponseEntity<String> getAllDocs(@RequestHeader("token") String token) {
 
-        Gson gson = new Gson();
-        Map<String, String> map = gson.fromJson(json, HashMap.class);
-        String token = map.get("token");
-        System.out.println(token);
-
-        gson = new GsonBuilder().setPrettyPrinting().create();
         User user = authService.getCachedUser(token);
 
         if (user != null) {
