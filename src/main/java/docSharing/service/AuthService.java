@@ -83,7 +83,7 @@ public class AuthService {
 
     public String login(User user) {
 
-        if (authenticateLogin(user)) {
+        if (user != null && authenticateLogin(user)) {
             String token = Token.generate();
             cachedUsers.put(token, user);
             return token;
@@ -102,7 +102,7 @@ public class AuthService {
     }
 
     public User getCachedUser(String token) {
-        return cachedUsers.get(token);
+        return (token== null)? null : cachedUsers.get(token);
     }
 }
 
