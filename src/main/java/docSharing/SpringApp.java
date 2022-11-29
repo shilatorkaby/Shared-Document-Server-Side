@@ -1,6 +1,7 @@
 package docSharing;
 
 import docSharing.Entities.Directory;
+import docSharing.Entities.Document;
 import docSharing.Entities.DocumentBody;
 import docSharing.Entities.User;
 import docSharing.controller.AuthController;
@@ -24,7 +25,6 @@ public class SpringApp {
     UserController userController;
     @Autowired
     AuthController authController;
-
     @Autowired
     DirectoryService directoryService;
     @Autowired
@@ -37,9 +37,16 @@ public class SpringApp {
         SpringApplication.run(SpringApp.class, args);
     }
 
-//    @EventListener (ApplicationReadyEvent.class)
-//    void method()
-//    {
+    @EventListener (ApplicationReadyEvent.class)
+    void method()
+    {
+//        userRepository.save(new User("yudin.david@gmail.com", "12345"));
+//        User user = userRepository.findByEmail("yudin.david@gmail.com");
+//        String token = authController.login(user).getBody().get("token");
+////        directoryRepository.save(new Directory(-1*user.getId(), "root"));
+//        Directory root = directoryRepository.findByFatherIdAndName(-1*user.getId(), "root");
+////        directoryRepository.save(new Directory(root.getId(), "first directory"));
 //
-//    }
+//        userController.createDocument(token, new DocumentBody(root.getId(), "first document", "yudin.david@gmail.com"));
+    }
 }

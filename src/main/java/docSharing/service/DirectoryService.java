@@ -1,7 +1,9 @@
 package docSharing.service;
 
 import docSharing.Entities.Directory;
+import docSharing.Entities.User;
 import docSharing.repository.DirectoryRepository;
+import docSharing.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,9 @@ import java.util.List;
 
 @Service
 public class DirectoryService {
+
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private DirectoryRepository directoryRepository;
 
@@ -54,7 +59,9 @@ public class DirectoryService {
         }
         return null;
     }
-    public List<Directory> getSubDirs(Long userId) {
+    public List<Directory> getSubDirs(User user) {
+
+        Long userId = userRepository.findByEmail(user.getEmail()).getId();
 
         Directory rootDir = directoryRepository.findByFatherId(-1*userId).get(0);
         if (rootDir != null) {
