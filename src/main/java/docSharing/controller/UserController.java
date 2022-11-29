@@ -47,6 +47,21 @@ public class UserController {
         return ResponseEntity.badRequest().build();
 
     }
+    @RequestMapping(value = "get/root/subFolders", method = RequestMethod.GET)
+    public ResponseEntity<String> getSubDirs(@RequestHeader("token") String token) {
+        User user = authService.getCachedUser(token);
+
+        if (user != null) {
+            List<Directory> subFolders = directoryService.getSubDirs(user.getId());
+            if (subFolders != null) {
+                return ResponseEntity.ok(gson.toJson(subFolders));
+            }
+            else
+                return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.badRequest().build();
+
+    }
 
     @RequestMapping(value = "/create-directory", method = RequestMethod.POST)
     public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
