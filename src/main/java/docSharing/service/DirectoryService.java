@@ -54,6 +54,14 @@ public class DirectoryService {
         }
         return null;
     }
+    public List<Directory> getSubDirs(Long userId) {
+
+        Directory rootDir = directoryRepository.findByFatherId(-1*userId).get(0);
+        if (rootDir != null) {
+            return directoryRepository.findByFatherId(rootDir.getId());
+        }
+        return null;
+    }
 
 
     public Directory addNewDir(Directory currentDirectory) {

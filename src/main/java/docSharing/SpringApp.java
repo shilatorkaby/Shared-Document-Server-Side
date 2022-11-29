@@ -36,4 +36,10 @@ public class SpringApp {
     public static void main(String[] args) {
         SpringApplication.run(SpringApp.class, args);
     }
+
+//    @EventListener (ApplicationReadyEvent.class)
+//    void method()
+//    {
+//
+//    }
 }
