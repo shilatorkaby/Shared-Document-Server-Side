@@ -32,31 +32,35 @@ public class UserController {
     private DirectoryService directoryService;
     private static final Gson gson = new Gson();
 
-    @RequestMapping(value = "get/subFolders", method = RequestMethod.GET)
-    public ResponseEntity<String> getSubDirs(@RequestHeader("token") String token,@RequestBody Directory directory) {
+    @RequestMapping(value = "/get/sub-files", method = RequestMethod.POST)
+    public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token, @RequestBody Directory directory) {
         User user = authService.getCachedUser(token);
 
         if (user != null && directory != null) {
             List<Directory> subFolders = directoryService.getSubDirs(directory);
             if (subFolders != null) {
                 return ResponseEntity.ok(gson.toJson(subFolders));
-            }
-            else
+            } else
                 return ResponseEntity.notFound().build();
         }
         return ResponseEntity.badRequest().build();
 
     }
-    @RequestMapping(value = "get/root/subFolders", method = RequestMethod.GET)
-    public ResponseEntity<String> getSubDirs(@RequestHeader("token") String token) {
+
+    @RequestMapping(value = "/get/root/sub-files", method = RequestMethod.POST)
+    public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token) {
+
+        System.out.println(token);
+
         User user = authService.getCachedUser(token);
 
+
         if (user != null) {
-            List<Directory> subFolders = directoryService.getSubDirs(user.getId());
+
+            List<Directory> subFolders = directoryService.getSubDirs(user);
             if (subFolders != null) {
                 return ResponseEntity.ok(gson.toJson(subFolders));
-            }
-            else
+            } else
                 return ResponseEntity.notFound().build();
         }
         return ResponseEntity.badRequest().build();
@@ -90,7 +94,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "change/dir", method = RequestMethod.POST)
-    public ResponseEntity<String> changeDir(@RequestHeader("token") String token,@RequestBody Directory directory) {
+    public ResponseEntity<String> changeDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
         if (authService.getCachedUser(token) != null && directory != null) {
             Directory changedDir = directoryService.changeDir(directory);
             if (changedDir != null) {
@@ -101,7 +105,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "delete/dir", method = RequestMethod.POST)
-    public ResponseEntity<String> removeDir(@RequestHeader("token") String token,@RequestBody Directory directory) {
+    public ResponseEntity<String> removeDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
         if (authService.getCachedUser(token) != null && directory != null) {
             if (!directoryService.removeDir(directory.getId())) {
                 return ResponseEntity.ok("Directory was deleted successfully");
@@ -111,7 +115,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "get/optional/dir", method = RequestMethod.GET)
-    public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token,@RequestBody Directory directory) {
+    public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody Directory directory) {
         if (authService.getCachedUser(token) != null && directory != null) {
             List<Directory> optionalFolders = directoryService.getOptionToMove(directory);
             if (optionalFolders != null) {
@@ -123,7 +127,7 @@ public class UserController {
 
 
     @RequestMapping(value = "/get/docs", method = RequestMethod.POST)
-        public ResponseEntity<String> getAllDocs(@RequestHeader("token") String token) {
+    public ResponseEntity<String> getAllDocs(@RequestHeader("token") String token) {
 
         User user = authService.getCachedUser(token);
 

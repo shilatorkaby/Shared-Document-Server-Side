@@ -102,7 +102,7 @@ public class AuthService {
     }
 
     public User getCachedUser(String token) {
-        return (token== null)? null : cachedUsers.get(token);
+        return (token == null) ? null : cachedUsers.get(token);
     }
 }
 
