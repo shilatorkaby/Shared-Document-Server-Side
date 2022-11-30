@@ -1,11 +1,13 @@
 package docSharing;
 
 import docSharing.Entities.Directory;
+import docSharing.Entities.Document;
 import docSharing.Entities.DocumentBody;
 import docSharing.Entities.User;
 import docSharing.controller.AuthController;
 import docSharing.controller.UserController;
 import docSharing.repository.DirectoryRepository;
+import docSharing.repository.DocRepository;
 import docSharing.repository.UserRepository;
 import docSharing.service.DirectoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,44 +26,32 @@ public class SpringApp {
     UserController userController;
     @Autowired
     AuthController authController;
-
     @Autowired
     DirectoryService directoryService;
     @Autowired
     DirectoryRepository directoryRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    DocRepository docRepository;
 
 
-     public static void main(String[] args) {
-
+    public static void main(String[] args) {
         SpringApplication.run(SpringApp.class, args);
     }
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void createDoc()
+    @EventListener (ApplicationReadyEvent.class)
+    void method()
     {
-        authController.emailVerification(null);
-//        User user = new User("shillat14@gmail.com","12345");
-//        authController.createUser(user);
-//        ResponseEntity<Map<String, String>> responseEntity = authController.login(user);
+//        userRepository.save(new User("yudin.david@gmail.com", "12345"));
+//        User user = userRepository.findByEmail("yudin.david@gmail.com");
+//        String token = authController.login(user).getBody().get("token");
+////        directoryRepository.save(new Directory(-1*user.getId(), "root"));
+//        Directory root = directoryRepository.findByFatherIdAndName(-1*user.getId(), "root");
+////        directoryRepository.save(new Directory(root.getId(), "first directory"));
 
-//        Long rootId = directoryRepository.getRootDir(-1*userRepository.findByEmail(user.getEmail()).getId()).getId();
-//        userController.createDocument(responseEntity.getBody().get("token"), new DocumentBody(rootId, "first document",user.getEmail()));
-//        userController.createNewDir(responseEntity.getBody().get("token"), new Directory(rootId, "first directory"));
-//        userController.createNewDir(responseEntity.getBody().get("token"), new Directory(8L, "second directory"));
-
-//        Directory directory = new Directory();
-//        directory.setId(9L);
-//        directory.setFatherId(8L);
-//        ResponseEntity<String> response = userController.getOptionToMove(directory);
-//        System.out.println(response.getBody());
-//        //directory.setFatherId(4L);
-//        //directory.setFatherId(8L);
-//        System.out.println(userController.changeDir(directory).getBody());
-
-        Directory directory1 = new Directory(-3L,"exm-die");
-        directoryRepository.save(directory1);
-        System.out.println(directoryRepository.existsById(directory1.getId()));
+        docRepository.updateFileContent(4L, "Best article ever!!");
+//
+//        userController.createDocument(token, new DocumentBody(root.getId(), "first document", "yudin.david@gmail.com"));
     }
 }
