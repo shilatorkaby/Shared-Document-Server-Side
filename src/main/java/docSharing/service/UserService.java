@@ -4,6 +4,7 @@ import docSharing.Entities.*;
 import docSharing.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.sql.SQLDataException;
 import java.util.List;
 
@@ -24,7 +25,6 @@ public class UserService {
     }
 
     public Document createDocument(User user, DocumentBody documentBody) {
-
 
         if (documentBody != null && !findDoc(user, documentBody.getFileName())) {
 
