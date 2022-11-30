@@ -27,7 +27,7 @@ public class EditController {
             private String startPos;
             private String endPos;
 
-
+            private String docId;
 
             public String getStartPos() {
                 return startPos;
@@ -78,6 +78,14 @@ public class EditController {
 
             public void setPosition(int position) {
                 this.position = position;
+            }
+
+            public String getDocId() {
+                return docId;
+            }
+
+            public void setDocId(String docId) {
+                this.docId = docId;
             }
         }
 
