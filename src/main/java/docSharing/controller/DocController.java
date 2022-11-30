@@ -1,6 +1,7 @@
 package docSharing.controller;
 
 import com.google.gson.Gson;
+import docSharing.Entities.DocPermission;
 import docSharing.Entities.Document;
 import docSharing.Entities.User;
 import docSharing.service.AuthService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -38,6 +40,17 @@ public class DocController {
             if (temp != null) {
                 return ResponseEntity.ok(gson.toJson(temp));
             }
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @RequestMapping(value = "/roles", method = RequestMethod.POST)
+    public ResponseEntity<String> getRolesByToken(@RequestHeader("token") String token) {
+        User user = authService.getCachedUser(token);
+
+        if (user != null) {
+            List<DocPermission> temp = docService.getRolesByEmail(user.getEmail());
+            return ResponseEntity.ok(gson.toJson(temp));
         }
         return ResponseEntity.notFound().build();
     }

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 public interface DocPermissionRepository extends JpaRepository<DocPermission, Long> {
@@ -18,6 +19,9 @@ public interface DocPermissionRepository extends JpaRepository<DocPermission, Lo
 
     @Query("SELECT d FROM DocPermission d WHERE d.docId = :docId and d.email = :email")
     DocPermission findByDocIdAndEmail(@Param("docId") Long docId, @Param("email") String email);
+
+    @Query("SELECT d FROM DocPermission d WHERE d.email = :email")
+    List<DocPermission> findAllPermissionsByEmail(@Param("email") String email);
 
     @Modifying
     @Transactional

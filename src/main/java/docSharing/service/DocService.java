@@ -8,6 +8,8 @@ import docSharing.repository.DocRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DocService {
     @Autowired
@@ -35,5 +37,10 @@ public class DocService {
         DocPermission docPermission = docPermissionRepository.findByDocIdAndEmail(id, user.getEmail());
 
         return (docPermission != null) ? docRepository.findByDocId(id) : null;
+    }
+
+    public List<DocPermission> getRolesByEmail(String email) {
+
+        return docPermissionRepository.findAllPermissionsByEmail(email);
     }
 }
