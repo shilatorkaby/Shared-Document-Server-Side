@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import docSharing.Entities.Contender;
 import docSharing.Entities.DocumentLink;
 import docSharing.Entities.User;
+import docSharing.Entities.UserRole;
 import docSharing.service.AuthService;
 import docSharing.service.SharingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin
@@ -24,10 +26,24 @@ public class SharingController {
     SharingService sharingService;
 
     @RequestMapping(value = "/share/via/email", method = RequestMethod.POST)
-    public ResponseEntity<String> shareViaEmail(@RequestBody Contender contender) {
-        // we should check if this email valid
-        sharingService.shareViaEmail(contender);
-        return ResponseEntity.ok("All good");
+    public ResponseEntity<String> shareViaEmail(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+
+        User user = authService.getCachedUser(token);
+
+        if (user != null) {
+
+            Long docId = Long.parseLong(map.get("docId"));
+            String email = map.get("email");
+            UserRole userRole = (map.get("userRole").equals("viewer"))? UserRole.VIEWER : UserRole.EDITOR;
+
+            // we should check if this email valid
+            Contender contender = sharingService.shareViaEmail(new Contender(docId, email, null, userRole));
+
+            if(contender != null){
+                return ResponseEntity.ok(  email + " was invited to the document");
+            }
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @RequestMapping(value = "/share/via/link", method = RequestMethod.POST)
