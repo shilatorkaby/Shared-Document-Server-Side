@@ -27,12 +27,18 @@ public class UserService {
 
 
         if (documentBody != null && !findDoc(user, documentBody.getFileName())) {
-            Document newDocument = new Document(user.getEmail(), documentBody.getFileName());
 
-            docRepository.save(newDocument);
+            user.setId(userRepository.findByEmail(user.getEmail()).getId());
+
+            Document newDocument = docRepository.save(new Document(user.getEmail(), documentBody.getFileName()));
             documentLinkRepository.save(new DocumentLink(newDocument.getId()));
             docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), UserRole.OWNER));
-            directoryRepository.save(new Directory(documentBody.getFatherId(), documentBody.getFileName(), newDocument.getId()));
+
+            System.out.println(user.getId());
+            System.out.println(directoryRepository.findByFatherId(user.getId() * -1).get(0).toString());
+
+            Long fId = directoryRepository.findByFatherId(user.getId() * -1).get(0).getId();
+            directoryRepository.save(new Directory(fId, documentBody.getFileName(), newDocument.getId()));
             return newDocument;
         }
         return null;
