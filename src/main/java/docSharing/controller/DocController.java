@@ -1,6 +1,7 @@
 package docSharing.controller;
 
 import com.google.gson.Gson;
+import com.mysql.cj.xdevapi.UpdateType;
 import docSharing.Entities.Document;
 import docSharing.Entities.User;
 import docSharing.service.AuthService;
@@ -47,6 +48,7 @@ public class DocController {
         public String getStartPos() {
             return startPos;
         }
+
         public void setDocId(String docId) {
             this.docId = docId;
         }
@@ -94,31 +96,46 @@ public class DocController {
             return position;
         }
 
-    @Autowired
-    private DocService docService;
+        @Autowired
+        private DocService docService;
 
-    @Autowired
-    private AuthService authService;
+        @Autowired
+        private AuthService authService;
 
-    private static final Gson gson = new Gson();
+        private static final Gson gson = new Gson();
 
         @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String save(@RequestBody Document document) {
-        return docService.save(document);
-    }
-
-    @RequestMapping(value = "/fetch", method = RequestMethod.POST)
-    public ResponseEntity<String> getDocumentById(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
-        User user = authService.getCachedUser(token);
-
-        System.out.println(map.get("id"));
-
-        if (user != null) {
-            Document temp = docService.getDocumentById(user, Long.parseLong(map.get("id")));
-            if (temp != null) {
-                return ResponseEntity.ok(gson.toJson(temp));
-            }
+        public String save(@RequestBody Document document) {
+            return docService.save(document);
         }
-        return ResponseEntity.notFound().build();
+
+        @RequestMapping(value = "/fetch", method = RequestMethod.POST)
+        public ResponseEntity<String> getDocumentById(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+            User user = authService.getCachedUser(token);
+
+            System.out.println(map.get("id"));
+
+            if (user != null) {
+                Document temp = docService.getDocumentById(user, Long.parseLong(map.get("id")));
+                if (temp != null) {
+                    return ResponseEntity.ok(gson.toJson(temp));
+                }
+            }
+            return ResponseEntity.notFound().build();
+        }
+    }
+    private class JoinMessage {
+        private String user;
+
+        public JoinMessage() {
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
+        }
     }
 }
