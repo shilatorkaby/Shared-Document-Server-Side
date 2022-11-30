@@ -69,11 +69,13 @@ public class UserController {
     }
 
     @RequestMapping(value = "/create-directory", method = RequestMethod.POST)
-    public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
+    public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
         User user = authService.getCachedUser(token);
 
-        if (user != null && directory != null) {
-            Directory newDir = directoryService.addNewDir(directory);
+        Directory directory = new Directory(null, map.get("name"));
+
+        if (user != null) {
+            Directory newDir = directoryService.addNewDir(user,directory);
             if (newDir != null) {
                 return ResponseEntity.ok(gson.toJson(newDir));
             }

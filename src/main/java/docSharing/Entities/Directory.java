@@ -25,6 +25,9 @@ public class Directory {
         this.name = name;
         this.docId = fileId;
     }
+  public Directory(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;
@@ -54,4 +57,13 @@ public class Directory {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return "Directory{" +
+                "id=" + id +
+                ", fatherId=" + fatherId +
+                ", name='" + name + '\'' +
+                ", docId=" + docId +
+                '}';
+    }
 }
