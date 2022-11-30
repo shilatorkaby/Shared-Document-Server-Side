@@ -59,11 +59,12 @@ public class DirectoryService {
         }
         return null;
     }
+
     public List<Directory> getSubDirs(User user) {
 
         Long userId = userRepository.findByEmail(user.getEmail()).getId();
 
-        Directory rootDir = directoryRepository.findByFatherId(-1*userId).get(0);
+        Directory rootDir = directoryRepository.findByFatherId(-1 * userId).get(0);
         if (rootDir != null) {
             return directoryRepository.findByFatherId(rootDir.getId());
         }
@@ -71,20 +72,17 @@ public class DirectoryService {
     }
 
 
-    public Directory addNewDir(User user ,Directory currentDirectory) {
+    public Directory addNewDir(User user, Directory currentDirectory) {
         user.setId(userRepository.findByEmail(user.getEmail()).getId());
         Directory newDir = null;
 
-        if (user.getId() != null && currentDirectory != null) {
-
-            if (directoryRepository.existsById(currentDirectory.getFatherId())
-                    && directoryIsNotExist(currentDirectory.getFatherId(), currentDirectory.getName())) {
+        if (currentDirectory != null && user.getId() != null) {
+            if (currentDirectory.getFatherId() != null && directoryRepository.existsById(currentDirectory.getFatherId()) &&
+                    directoryIsNotExist(currentDirectory.getFatherId(), currentDirectory.getName())) {
                 newDir = new Directory(currentDirectory.getFatherId(), currentDirectory.getName());
-            }
-            else if (currentDirectory.getFatherId() == null) {
+            } else if (currentDirectory.getFatherId() == null) {
 
-                Directory directory = directoryRepository.findByFatherId(-1*user.getId()).get(0);
-
+                Directory directory = directoryRepository.findByFatherId(-1 * user.getId()).get(0);
                 Long rootId = directory.getId();
 
                 if (directoryIsNotExist(rootId, currentDirectory.getName())) {
@@ -92,12 +90,10 @@ public class DirectoryService {
                 }
             }
         }
-
         return newDir != null ? directoryRepository.save(newDir) : null;
     }
 
-    boolean directoryIsNotExist(Long fatherId,String name)
-    {
+    boolean directoryIsNotExist(Long fatherId, String name) {
         return directoryRepository.findByFatherIdAndName(fatherId, name) == null;
     }
 
@@ -105,8 +101,9 @@ public class DirectoryService {
         Directory directory = directoryRepository.findById(dirId).orElse(null);
         if (directory != null) {
             directoryRepository.delete(directory);
+            return !directoryRepository.existsById(dirId);
         }
-        return directoryRepository.existsById(dirId);
+        return false;
     }
 
     public Long getRootId(Long userId) {
