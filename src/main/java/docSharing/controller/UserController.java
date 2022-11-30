@@ -33,10 +33,13 @@ public class UserController {
     private static final Gson gson = new Gson();
 
     @RequestMapping(value = "/get/sub-files", method = RequestMethod.POST)
-    public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token, @RequestBody Directory directory) {
+    public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
         User user = authService.getCachedUser(token);
 
-        if (user != null && directory != null) {
+        Directory directory = new Directory(null, map.get("name"));
+        directory.setId(Long.parseLong(map.get("id")));
+
+        if (user != null) {
             List<Directory> subFolders = directoryService.getSubDirs(directory);
             if (subFolders != null) {
                 return ResponseEntity.ok(gson.toJson(subFolders));
