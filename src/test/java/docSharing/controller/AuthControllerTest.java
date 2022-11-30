@@ -3,7 +3,6 @@ package docSharing.controller;
 import docSharing.Entities.Unconfirmed;
 import docSharing.Entities.User;
 import docSharing.repository.UserRepository;
-import docSharing.service.AuthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
