@@ -1,10 +1,7 @@
 package docSharing.service;
 
 import docSharing.Entities.*;
-import docSharing.repository.ContenderRepository;
-import docSharing.repository.DocPermissionRepository;
-import docSharing.repository.DocumentLinkRepository;
-import docSharing.repository.UserRepository;
+import docSharing.repository.*;
 import docSharing.utils.Email;
 import docSharing.utils.Token;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +17,9 @@ public class SharingService {
     private UserRepository userRepository;
 
     @Autowired
+    private DirectoryRepository directoryRepository;
+
+    @Autowired
     private DocPermissionRepository docPermissionRepository;
 
     @Autowired
@@ -27,6 +27,9 @@ public class SharingService {
 
     @Autowired
     private ContenderRepository contenderRepository;
+
+    @Autowired
+    private DocRepository docRepository;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -81,21 +84,29 @@ public class SharingService {
 
         Contender contender = contenderRepository.findByToken(token);
 
+
         // we check if the user has a role already in the document
         if (docPermissionRepository.findByDocIdAndEmail(contender.getDocId(), contender.getEmail()) != null) {
+
             contenderRepository.delete(contender);
             docPermissionRepository.updatePermission(contender.getDocId(), contender.getEmail(), contender.getUserRole());
+
+
             return "<h1>User successfully updated role</h1>";
         }
 
-        // we check if the contender exists
-        if (contender != null) {
+        User user = userRepository.findByEmail(contender.getEmail());
+
+        if (user != null) {
+            Long fId = directoryRepository.findByFatherId(user.getId() * -1).get(0).getId();
+            String name = docRepository.findByDocId(contender.getDocId()).getFileName();
+            directoryRepository.save(new Directory(fId, name, contender.getDocId()));
+
             contenderRepository.delete(contender);
             docPermissionRepository.save(new DocPermission(contender.getDocId(), contender.getEmail(), contender.getUserRole()));
 
             return "<h1>User successfully joined document</h1>";
         }
-
         return "User couldn't join document";
     }
 

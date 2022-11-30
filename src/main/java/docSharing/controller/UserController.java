@@ -85,7 +85,8 @@ public class UserController {
 
         User user = authService.getCachedUser(token);
 
-        if (user != null) {
+        if (user != null ) {
+
             Document temp = userService.createDocument(user, document);
             if (temp != null)
                 return ResponseEntity.ok(gson.toJson(temp));
