@@ -34,9 +34,6 @@ public class UserService {
             documentLinkRepository.save(new DocumentLink(newDocument.getId()));
             docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), UserRole.OWNER));
 
-            System.out.println(user.getId());
-            System.out.println(directoryRepository.findByFatherId(user.getId() * -1).get(0).toString());
-
             Long fId = directoryRepository.findByFatherId(user.getId() * -1).get(0).getId();
             directoryRepository.save(new Directory(fId, documentBody.getFileName(), newDocument.getId()));
             return newDocument;

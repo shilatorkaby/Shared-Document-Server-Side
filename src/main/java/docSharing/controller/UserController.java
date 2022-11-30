@@ -53,8 +53,6 @@ public class UserController {
     @RequestMapping(value = "/get/root/sub-files", method = RequestMethod.POST)
     public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token) {
 
-        System.out.println(token);
-
         User user = authService.getCachedUser(token);
 
 

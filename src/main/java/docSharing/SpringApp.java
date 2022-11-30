@@ -50,7 +50,7 @@ public class SpringApp {
 //        Directory root = directoryRepository.findByFatherIdAndName(-1*user.getId(), "root");
 ////        directoryRepository.save(new Directory(root.getId(), "first directory"));
 
-        docRepository.updateFileContent(4L, "Best article ever!!");
+//        docRepository.updateFileContent(4L, "Best article ever!!");
 //
 //        userController.createDocument(token, new DocumentBody(root.getId(), "first document", "yudin.david@gmail.com"));
     }
