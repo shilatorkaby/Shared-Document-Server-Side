@@ -56,12 +56,12 @@ class UserControllerTest {
     /*=================================== get Sub Directories ====================================================================*/
 
     @Test
-    void getSubDirs_nullDir_statusBadRequest() {
-        assertEquals(userController.getSubDirs(token,null).getStatusCode(), HttpStatus.BAD_REQUEST);
+    void getSubFiles_nullDir_statusBadRequest() {
+        assertEquals(userController.getSubFiles(token,null).getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 
     @Test
-    void getSubDirs_existDirWithSubDirs_ResponseOK() {
+    void getSubFiles_existDirWithSubDirs_ResponseOK() {
 
         directoryRepository.save(new Directory(287878L, "testDir"));
         Directory directory = directoryRepository.findByFatherIdAndName(287878L, "testDir");
@@ -70,31 +70,31 @@ class UserControllerTest {
         Directory subDirectory = directoryRepository.findByFatherIdAndName(directory.getId(), "subTestDir");
 
 
-        assertEquals(userController.getSubDirs(token, directory).getStatusCode(), HttpStatus.OK);
+        assertEquals(userController.getSubFiles(token, directory).getStatusCode(), HttpStatus.OK);
 
         directoryRepository.delete(directory);
         directoryRepository.delete(subDirectory);
     }
 
     @Test
-    void getSubDirs_existDirWithoutSubDirs_statusNotFound() {
+    void getSubFiles_existDirWithoutSubDirs_statusNotFound() {
 
         directoryRepository.save(new Directory(287878L, "testDir"));
         Directory directory = directoryRepository.findByFatherIdAndName(287878L, "testDir");
 
-        assertEquals(userController.getSubDirs(token, directory).getStatusCode(), HttpStatus.OK);
+        assertEquals(userController.getSubFiles(token, directory).getStatusCode(), HttpStatus.OK);
 
         directoryRepository.delete(directory);
     }
 
     @Test
-    void getSubDirs_notExistDir_statusNotFound() {
+    void getSubFiles_notExistDir_statusNotFound() {
         directoryRepository.save(new Directory(287878L, "testDir"));
         Directory directory = directoryRepository.findByFatherIdAndName(287878L, "testDir");
         directoryRepository.delete(directory);
 
 
-        assertEquals(userController.getSubDirs(token, directory).getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(userController.getSubFiles(token, directory).getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
     /*=================================== create new directory ====================================================================*/

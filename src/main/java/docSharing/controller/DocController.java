@@ -33,8 +33,6 @@ public class DocController {
     public ResponseEntity<String> getDocumentById(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
         User user = authService.getCachedUser(token);
 
-        System.out.println(map.get("id"));
-
         if (user != null) {
             Document temp = docService.getDocumentById(user, Long.parseLong(map.get("id")));
             if (temp != null) {
