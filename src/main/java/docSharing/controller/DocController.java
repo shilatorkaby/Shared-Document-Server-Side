@@ -1,25 +1,112 @@
 package docSharing.controller;
 
-import docSharing.Entities.Document;
-import docSharing.service.AuthService;
-import docSharing.service.DocService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.messaging.handler.annotation.SendTo;
 @RestController
-@CrossOrigin
-@RequestMapping("/doc")
 public class DocController {
+    @MessageMapping("/join")
+    public void sendPlainMessage(JoinMessage message) {
+        System.out.println(message.user + " joined");
+    }
 
-    @Autowired
-    private DocService docService;
+    @MessageMapping("/update")
+    @SendTo("/topic/updates")
+    public UpdateMessage sendPlainMessage(UpdateMessage message) {
+        return message;
+    }
 
-    @Autowired
-    private AuthService authService;
+    static class UpdateMessage {
+        private String user;
+        private UpdateType type;
+        private String content;
+        private int position;
 
+        private String startPos;
 
-        @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String save(@RequestBody Document document) {
-        return docService.save(document);
+        private String endPos;
+
+        private String docId;
+
+        public String getDocId() {
+            return docId;
+        }
+
+        public String getStartPos() {
+            return startPos;
+        }
+        public void setDocId(String docId) {
+            this.docId = docId;
+        }
+
+        public void setStartPos(String startPos) {
+            this.startPos = startPos;
+        }
+
+        public String getEndPos() {
+            return endPos;
+        }
+
+        public void setEndPos(String endPos) {
+            this.endPos = endPos;
+        }
+
+        public UpdateMessage() {
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
+        }
+
+        public UpdateType getType() {
+            return type;
+        }
+
+        public void setType(UpdateType type) {
+            this.type = type;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public void setPosition(int position) {
+            this.position = position;
+        }
+    }
+
+    public enum UpdateType {
+        DELETE,
+        APPEND,
+        DELETE_RANGE,
+        APPEND_RANGE
+    }
+
+    private class JoinMessage {
+        private String user;
+
+        public JoinMessage() {
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
+        }
     }
 }
+
