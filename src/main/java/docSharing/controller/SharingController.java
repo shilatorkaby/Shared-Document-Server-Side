@@ -7,6 +7,8 @@ import docSharing.Entities.User;
 import docSharing.Entities.UserRole;
 import docSharing.service.AuthService;
 import docSharing.service.SharingService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,8 @@ public class SharingController {
     @Autowired
     SharingService sharingService;
 
+    private static Logger logger = LogManager.getLogger(SharingController.class.getName());
+
     /**
      * share via email endpoint, receives data about the desired user and send email invitation to the document
      *
@@ -33,22 +37,22 @@ public class SharingController {
      */
     @RequestMapping(value = "/share/via/email", method = RequestMethod.POST)
     public ResponseEntity<String> shareViaEmail(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
-
+        logger.info("Share via email , token is: " + token);
         User user = authService.getCachedUser(token);
 
         if (user != null) {
-
             Long docId = Long.parseLong(map.get("docId"));
             String email = map.get("email");
             UserRole userRole = (map.get("userRole").equals("viewer")) ? UserRole.VIEWER : UserRole.EDITOR;
-
+            logger.info("Doc id: " + docId + "email: " + email + "user role: " + userRole);
             // we should check if this email valid
             Contender contender = sharingService.shareViaEmail(new Contender(docId, email, null, userRole));
-
             if (contender != null) {
+                logger.info("Contender is not null , email was sent");
                 return ResponseEntity.ok(email + " was invited to the document");
             }
         }
+        logger.warn("Share via email failed.");
         return ResponseEntity.badRequest().build();
     }
 
@@ -57,7 +61,7 @@ public class SharingController {
      */
     @RequestMapping(value = "/share/via/link", method = RequestMethod.POST)
     public ResponseEntity<String> shareViaLink(@RequestHeader("token") String token, @RequestBody String json) {
-
+        logger.info("Share via link , token is: " + token);
         Gson gson = new Gson();
         Map<String, String> map = gson.fromJson(json, HashMap.class);
 
@@ -69,9 +73,10 @@ public class SharingController {
             map.clear();
             map.put("viewerLink", "http://localhost:8080/accept/link-invite/" + documentLink.getViewerToken());
             map.put("editorLink", "http://localhost:8080/accept/link-invite/" + documentLink.getEditorToken());
-
+            logger.info("Email was sent");
             return ResponseEntity.ok(gson.toJson(map));
         }
+        logger.warn("Share via link failed.");
         return ResponseEntity.notFound().build();
     }
 
@@ -84,6 +89,7 @@ public class SharingController {
      */
     @RequestMapping(value = "/accept/email-invite/{token}")
     public String emailVerification(@PathVariable("token") String token) {
+        logger.info("Email verification with token: " + token);
         return sharingService.verifyEmailToken(token);
     }
 

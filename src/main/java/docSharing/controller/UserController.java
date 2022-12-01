@@ -8,6 +8,8 @@ import docSharing.Entities.User;
 import docSharing.service.AuthService;
 import docSharing.service.DirectoryService;
 import docSharing.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,45 +30,56 @@ public class UserController {
 
     @Autowired
     DirectoryService directoryService;
+
+    private static Logger logger = LogManager.getLogger(UserController.class.getName());
+
     private static final Gson gson = new Gson();
 
     @RequestMapping(value = "/get/sub-files", method = RequestMethod.POST)
     public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+        logger.info("Get subs files with token: " + token);
         User user = authService.getCachedUser(token);
         if (map != null) {
             Directory directory = new Directory(null, map.get("name"));
             directory.setId(Long.parseLong(map.get("id")));
-
             if (user != null) {
                 List<Directory> subFolders = directoryService.getSubDirs(directory);
                 if (subFolders != null) {
+                    logger.info("Get subs files successfully complete");
                     return ResponseEntity.ok(gson.toJson(subFolders));
-                } else return ResponseEntity.notFound().build();
+                }
+                else{
+                    logger.warn("Sub folder is null");
+                    return ResponseEntity.notFound().build();
+                }
             }
         }
+        logger.warn("Get Sub files failed.");
         return ResponseEntity.badRequest().build();
 
     }
 
     @RequestMapping(value = "/get/root/sub-files", method = RequestMethod.POST)
     public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token) {
-
+        logger.info("Get subs files with token: " + token);
         User user = authService.getCachedUser(token);
-
-
         if (user != null) {
-
             List<Directory> subFolders = directoryService.getSubDirs(user);
             if (subFolders != null) {
+                logger.info("Get subs files successfully complete");
                 return ResponseEntity.ok(gson.toJson(subFolders));
-            } else return ResponseEntity.notFound().build();
+            } else{
+                logger.warn("Sub folder is null");
+                return ResponseEntity.notFound().build();
+            }
         }
+        logger.warn("Get Sub files failed.");
         return ResponseEntity.badRequest().build();
-
     }
 
     @RequestMapping(value = "/create-directory", method = RequestMethod.POST)
     public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+        logger.info("Create new dir with token: " + token);
         User user = authService.getCachedUser(token);
 
         if (map != null && user != null) {
@@ -74,57 +87,74 @@ public class UserController {
             if (map.get("fatherId") != null) {
                 newDir = directoryService.addNewDir(user, new Directory(Long.parseLong(map.get("fatherId")), map.get("name")));
             } else {
+                logger.warn("map.get(fatherId) is null");
                 newDir = directoryService.addNewDir(user, new Directory(null, map.get("name")));
             }
             if (newDir != null) {
+                logger.info("Create new dir with token: " + token);
                 return ResponseEntity.ok(gson.toJson(newDir));
             }
+            logger.warn("New dir is null");
         }
+        logger.warn("create new dir failed.");
         return ResponseEntity.notFound().build();
     }
 
     @RequestMapping(value = "/create-document", method = RequestMethod.POST)
     public ResponseEntity<String> createDocument(@RequestHeader("token") String token, @RequestBody DocumentBody document) {
-
+    logger.info("Create document : " + document.getFileName());
         User user = authService.getCachedUser(token);
 
         if (user != null) {
-
             Document temp = userService.createDocument(user, document);
-            if (temp != null) return ResponseEntity.ok(gson.toJson(temp));
+            if (temp != null) {
+                logger.info("Create document successfully complete");
+                return ResponseEntity.ok(gson.toJson(temp));
+            }
+            logger.warn("Document is null");
         }
+        logger.warn("Create document failed.");
         return ResponseEntity.notFound().build();
     }
 
     @RequestMapping(value = "change/dir", method = RequestMethod.POST)
     public ResponseEntity<String> changeDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
+        logger.info("Change dir with token: " + token + "to directory : " + directory.getName());
         if (authService.getCachedUser(token) != null && directory != null) {
             Directory changedDir = directoryService.changeDir(directory);
             if (changedDir != null) {
+                logger.info("Change dir successfully complete");
                 return ResponseEntity.ok(gson.toJson(changedDir));
             }
         }
+        logger.warn("Change dir failed.");
         return ResponseEntity.notFound().build();
     }
 
     @RequestMapping(value = "delete/dir", method = RequestMethod.POST)
     public ResponseEntity<String> removeDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
+        logger.info("Remove directory : " + directory.getName());
         if (authService.getCachedUser(token) != null && directory != null) {
             if (directoryService.removeDir(directory.getId())) {
-                return ResponseEntity.ok("Directory was deleted successfully");
+                logger.info("Remove dir successfully complete");
+                return ResponseEntity.ok("Directory was removed successfully");
             }
         }
+        logger.warn("Remove dir failed.");
         return ResponseEntity.notFound().build();
     }
 
     @RequestMapping(value = "get/optional/dir", method = RequestMethod.GET)
     public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody Directory directory) {
+        logger.info("get option to move to directory: " + directory.getName());
         if (authService.getCachedUser(token) != null && directory != null) {
             List<Directory> optionalFolders = directoryService.getOptionToMove(directory);
             if (optionalFolders != null) {
+                logger.info("get option to move successfully complete");
                 return ResponseEntity.ok(gson.toJson(optionalFolders));
             }
         }
+        logger.warn("get option to move to directory failed.");
         return ResponseEntity.notFound().build();
     }
 

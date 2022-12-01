@@ -26,7 +26,6 @@ public class EditController {
             private int position;
             private String startPos;
             private String endPos;
-
             private String docId;
 
             public String getStartPos() {
