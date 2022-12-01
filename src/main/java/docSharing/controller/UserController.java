@@ -89,7 +89,6 @@ public class UserController {
         User user = authService.getCachedUser(token);
 
         if (user != null) {
-
             Document temp = userService.createDocument(user, document);
             if (temp != null) return ResponseEntity.ok(gson.toJson(temp));
         }
@@ -117,8 +116,12 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @RequestMapping(value = "get/optional/dir", method = RequestMethod.GET)
-    public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody Directory directory) {
+    @RequestMapping(value = "/get/optional/dir", method = RequestMethod.POST)
+    public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+        System.out.println("hiiiiiiiiiiiiiiiii");
+        Directory directory = new Directory();
+        directory.setId(Long.parseLong(map.get("id")));
+        System.out.println(directory);
         if (authService.getCachedUser(token) != null && directory != null) {
             List<Directory> optionalFolders = directoryService.getOptionToMove(directory);
             if (optionalFolders != null) {

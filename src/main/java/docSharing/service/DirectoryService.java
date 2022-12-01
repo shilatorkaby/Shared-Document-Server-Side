@@ -24,6 +24,7 @@ public class DirectoryService {
         if (!directoryRepository.existsById(directory.getId()) || !directoryRepository.existsById(directory.getFatherId()))
             return null;
 
+        directory.setFatherId(directoryRepository.findById(directory.getId()).get().getFatherId());
         List<Directory> optionalDirs = new ArrayList<>();
         List<Directory> sisterDirs = directoryRepository.findDirsByFatherId(directory.getFatherId(), directory.getId());
         if (sisterDirs.size() > 0) {
