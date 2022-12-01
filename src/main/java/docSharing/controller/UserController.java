@@ -27,7 +27,7 @@ public class UserController {
     UserService userService;
 
     @Autowired
-    private DirectoryService directoryService;
+    DirectoryService directoryService;
     private static final Gson gson = new Gson();
 
     @RequestMapping(value = "/get/sub-files", method = RequestMethod.POST)
