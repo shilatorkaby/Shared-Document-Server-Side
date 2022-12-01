@@ -1,4 +1,5 @@
 package docSharing.Entities;
+
 import docSharing.utils.Token;
 
 import javax.persistence.*;
