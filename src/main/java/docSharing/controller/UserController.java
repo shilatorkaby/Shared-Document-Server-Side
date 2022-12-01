@@ -27,7 +27,7 @@ public class UserController {
     UserService userService;
 
     @Autowired
-    private DirectoryService directoryService;
+    DirectoryService directoryService;
     private static final Gson gson = new Gson();
 
     @RequestMapping(value = "/get/sub-files", method = RequestMethod.POST)
@@ -74,9 +74,8 @@ public class UserController {
         if (map != null && user != null) {
             Directory newDir;
             if (map.get("fatherId") != null) {
-               newDir  = directoryService.addNewDir(user, new Directory(Long.parseLong(map.get("fatherId")), map.get("name")));
-            }
-            else {
+                newDir = directoryService.addNewDir(user, new Directory(Long.parseLong(map.get("fatherId")), map.get("name")));
+            } else {
                 newDir = directoryService.addNewDir(user, new Directory(null, map.get("name")));
             }
             if (newDir != null) {
