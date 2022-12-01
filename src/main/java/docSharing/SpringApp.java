@@ -35,23 +35,7 @@ public class SpringApp {
     @Autowired
     DocRepository docRepository;
 
-
     public static void main(String[] args) {
         SpringApplication.run(SpringApp.class, args);
-    }
-
-    @EventListener (ApplicationReadyEvent.class)
-    void method()
-    {
-//        userRepository.save(new User("yudin.david@gmail.com", "12345"));
-//        User user = userRepository.findByEmail("yudin.david@gmail.com");
-//        String token = authController.login(user).getBody().get("token");
-////        directoryRepository.save(new Directory(-1*user.getId(), "root"));
-//        Directory root = directoryRepository.findByFatherIdAndName(-1*user.getId(), "root");
-////        directoryRepository.save(new Directory(root.getId(), "first directory"));
-
-//        docRepository.updateFileContent(4L, "Best article ever!!");
-//
-//        userController.createDocument(token, new DocumentBody(root.getId(), "first document", "yudin.david@gmail.com"));
     }
 }
