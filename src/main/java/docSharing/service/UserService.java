@@ -25,19 +25,25 @@ public class UserService {
     }
 
     public Document createDocument(User user, DocumentBody documentBody) {
+        user.setId(userRepository.findByEmail(user.getEmail()).getId());
+        Long fatherId = null;
 
-        if (documentBody != null && !findDoc(user, documentBody.getFileName())) {
+        if (documentBody != null && user.getId() != null && !findDoc(user, documentBody.getFileName())) {
+            if (documentBody.getFatherId() != null && directoryRepository.existsById(documentBody.getFatherId()))
+            {
+                fatherId = documentBody.getFatherId();
+            } else if (documentBody.getFatherId() == null)
+            {
+                fatherId = directoryRepository.findByFatherId(user.getId() * -1).get(0).getId();
+            }
+            if (fatherId != null) {
+                Document newDocument = docRepository.save(new Document(user.getEmail(), documentBody.getFileName()));
+                documentLinkRepository.save(new DocumentLink(newDocument.getId()));
+                docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), UserRole.OWNER));
 
-            user.setId(userRepository.findByEmail(user.getEmail()).getId());
-
-            Document newDocument = docRepository.save(new Document(user.getEmail(), documentBody.getFileName()));
-            documentLinkRepository.save(new DocumentLink(newDocument.getId()));
-            docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), UserRole.OWNER));
-
-            Long fId = directoryRepository.findByFatherId(user.getId() * -1).get(0).getId();
-            directoryRepository.save(new Directory(fId, documentBody.getFileName(), newDocument.getId()));
-            return newDocument;
-        }
+                directoryRepository.save(new Directory(fatherId, documentBody.getFileName(), newDocument.getId()));
+                return newDocument;
+            }        }
         return null;
     }
 

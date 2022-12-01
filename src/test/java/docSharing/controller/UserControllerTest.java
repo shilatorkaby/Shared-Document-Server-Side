@@ -206,15 +206,15 @@ class UserControllerTest {
     void createDocument_newDocument_ResponseOK() {
 
         User user = userRepository.findByEmail("testUser@gmail.com");
-        directoryRepository.save(new Directory(287878L, "testDir"));
-        Directory directory = directoryRepository.findByFatherIdAndName(287878L, "testDir");
+        Directory directory = directoryRepository.save(new Directory(287878L, "testDir"));
 
         ResponseEntity<String> response = userController.createDocument(token, new DocumentBody(directory.getId(), "testDoc", user.getEmail()));
         Document newDocument = gson.fromJson(response.getBody(), Document.class);
 
         directoryRepository.delete(directory);
-        docRepository.delete(docRepository.findByNameAndEmail("testDoc", user.getEmail()));
         directoryRepository.delete(directoryRepository.findByFatherIdAndName(directory.getId(), "testDoc"));
+
+        docRepository.delete(newDocument);
         documentLinkRepository.delete(documentLinkRepository.findByDocId(newDocument.getId()));
         docPermissionRepository.delete(docPermissionRepository.findByDocIdAndEmail(newDocument.getId(), user.getEmail()));
         assertEquals(response.getStatusCode(), HttpStatus.OK);
@@ -291,7 +291,6 @@ class UserControllerTest {
         assertEquals(response.getStatusCode(),HttpStatus.OK);
     }
 
-
     /*=================================== remove directory ====================================================================*/
 
     @Test
@@ -367,10 +366,6 @@ class UserControllerTest {
 
         assertEquals(response.getStatusCode(),HttpStatus.OK);
     }
-
-
-
-    /*=================================== remove directory ====================================================================*/
 
 
 }

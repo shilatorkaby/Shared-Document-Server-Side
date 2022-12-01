@@ -41,8 +41,7 @@ public class UserController {
                 List<Directory> subFolders = directoryService.getSubDirs(directory);
                 if (subFolders != null) {
                     return ResponseEntity.ok(gson.toJson(subFolders));
-                } else
-                    return ResponseEntity.notFound().build();
+                } else return ResponseEntity.notFound().build();
             }
         }
         return ResponseEntity.badRequest().build();
@@ -60,8 +59,7 @@ public class UserController {
             List<Directory> subFolders = directoryService.getSubDirs(user);
             if (subFolders != null) {
                 return ResponseEntity.ok(gson.toJson(subFolders));
-            } else
-                return ResponseEntity.notFound().build();
+            } else return ResponseEntity.notFound().build();
         }
         return ResponseEntity.badRequest().build();
 
@@ -74,9 +72,8 @@ public class UserController {
         if (map != null && user != null) {
             Directory newDir;
             if (map.get("fatherId") != null) {
-               newDir  = directoryService.addNewDir(user, new Directory(Long.parseLong(map.get("fatherId")), map.get("name")));
-            }
-            else {
+                newDir = directoryService.addNewDir(user, new Directory(Long.parseLong(map.get("fatherId")), map.get("name")));
+            } else {
                 newDir = directoryService.addNewDir(user, new Directory(null, map.get("name")));
             }
             if (newDir != null) {
@@ -94,8 +91,7 @@ public class UserController {
         if (user != null) {
 
             Document temp = userService.createDocument(user, document);
-            if (temp != null)
-                return ResponseEntity.ok(gson.toJson(temp));
+            if (temp != null) return ResponseEntity.ok(gson.toJson(temp));
         }
         return ResponseEntity.notFound().build();
     }
@@ -132,17 +128,4 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-
-    @RequestMapping(value = "/get/docs", method = RequestMethod.POST)
-    public ResponseEntity<String> getAllDocs(@RequestHeader("token") String token) {
-
-        User user = authService.getCachedUser(token);
-
-        if (user != null) {
-            String docs = gson.toJson(userService.getAllDocs(user));
-            if (docs != null)
-                return ResponseEntity.ok(docs);
-        }
-        return ResponseEntity.notFound().build();
-    }
 }
