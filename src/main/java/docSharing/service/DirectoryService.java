@@ -21,6 +21,8 @@ public class DirectoryService {
 
     public List<Directory> getOptionToMove(Directory directory) {
 
+        directory.setFatherId(directoryRepository.findById(directory.getId()).get().getFatherId());
+
         if (!directoryRepository.existsById(directory.getId()) || !directoryRepository.existsById(directory.getFatherId()))
             return null;
 

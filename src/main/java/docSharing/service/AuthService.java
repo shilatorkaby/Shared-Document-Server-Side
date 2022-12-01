@@ -91,16 +91,34 @@ public class AuthService {
         return null;
     }
 
+    /**
+     * authenticates login
+     *
+     * @param user
+     * @return
+     */
     boolean authenticateLogin(User user) {
         User temp = userRepository.findByEmail(user.getEmail());
 
         return temp != null && temp.getPassword().equals(user.getPassword());
     }
 
+    /**
+     * checks if the given email is in the database
+     *
+     * @param email
+     * @return boolean
+     */
     boolean isEmailInDatabase(String email) {
         return (userRepository.findByEmail(email) != null);
     }
 
+    /**
+     * main function to check if the user is logged, and able to perform actions
+     *
+     * @param token (Unique key for each logged user)
+     * @return User
+     */
     public User getCachedUser(String token) {
         return (token == null) ? null : cachedUsers.get(token);
     }
