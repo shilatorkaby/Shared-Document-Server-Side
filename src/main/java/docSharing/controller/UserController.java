@@ -181,9 +181,15 @@ public class UserController {
     /**
      * NOT USED RIGHT NOW, WILL BE FIXED SOON
      */
-    @RequestMapping(value = "get/optional/dir", method = RequestMethod.GET)
-    public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody Directory directory) {
+
+    @RequestMapping(value = "/get/optional/dir", method = RequestMethod.POST)
+    public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+        
         logger.info("get option to move to directory: " + directory.getName());
+
+        Directory directory = new Directory();
+        directory.setId(Long.parseLong(map.get("id")));
+
         if (authService.getCachedUser(token) != null && directory != null) {
             List<Directory> optionalFolders = directoryService.getOptionToMove(directory);
             if (optionalFolders != null) {
@@ -194,5 +200,6 @@ public class UserController {
         logger.warn("get option to move to directory failed.");
         return ResponseEntity.notFound().build();
     }
+
 
 }
