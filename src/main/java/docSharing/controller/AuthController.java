@@ -20,7 +20,7 @@ public class AuthController {
     private final AuthService authService;
     public final Validation validation; // should be static later on
 
-    private static final Logger logger = LogManager.getLogger(AuthController.class);
+    private static Logger logger = LogManager.getLogger(AuthController.class.getName());
 
 
     public AuthController() {
@@ -37,11 +37,16 @@ public class AuthController {
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<String> createUser(@RequestBody User user) {
+        logger.info("Creating user: " + user.getEmail());
         User verifiedUser = authService.register(user);
-        if (verifiedUser != null)
+        if (verifiedUser != null) {
+            logger.info("verified user successfully completed!");
             return ResponseEntity.ok().build();
-        else
+        }
+        else{
+            logger.warn("verified user failed.");
             return ResponseEntity.badRequest().build();
+        }
     }
 
     /**
@@ -52,9 +57,12 @@ public class AuthController {
      */
     @RequestMapping(value = "/verify/{token}")
     public ResponseEntity<String> emailVerification(@PathVariable("token") String token) {
+        logger.info("Email verification with this token:  " + token);
         if (token != null) {
+            logger.info("token is not null" + token);
             return ResponseEntity.ok(authService.verifyToken(token));
         }
+        logger.warn("token is null");
         return ResponseEntity.notFound().build();
     }
 
@@ -67,17 +75,21 @@ public class AuthController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
+        logger.info("login with user:  " + user.getEmail());
         if (user != null) {
+            logger.info("User is not null");
             validation.isValidEmail(user.getEmail());
             validation.isValidPassword(user.getPassword());
             String token = authService.login(user);
-
+            logger.info("User token is:  " + token);
             if (token != null) {
+                logger.info("Token is found");
                 Map<String, String> map = new HashMap<>();
                 map.put("token", token);
                 return ResponseEntity.ok(map);
             }
         }
+        logger.info("login failed.");
         return ResponseEntity.notFound().build();
     }
 }
