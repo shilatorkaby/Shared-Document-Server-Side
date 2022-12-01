@@ -2,8 +2,6 @@ package docSharing.service;
 
 import docSharing.Entities.*;
 import docSharing.repository.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +21,10 @@ public class UserService {
     @Autowired
     private DirectoryRepository directoryRepository;
 
-    private static Logger logger = LogManager.getLogger(UserService.class.getName());
-
     public UserService() {
     }
 
     public Document createDocument(User user, DocumentBody documentBody) {
-        logger.info("Create doc to: " + user.getEmail() + "doc body: " + documentBody.getFileName());
         user.setId(userRepository.findByEmail(user.getEmail()).getId());
         Long fatherId = null;
 
@@ -49,7 +44,6 @@ public class UserService {
                 directoryRepository.save(new Directory(fatherId, documentBody.getFileName(), newDocument.getId()));
                 return newDocument;
             }        }
-        logger.warn("Create Document failed");
         return null;
     }
 
@@ -66,10 +60,8 @@ public class UserService {
     public User findUser(User user) throws SQLDataException {
         User u = userRepository.findByEmail(user.getEmail());
         if (u == null) {
-            logger.error("CEmail %s not exists in users table", user.getEmail());
             throw new SQLDataException(String.format("Email %s not exists in users table", user.getEmail()));
         }
-        logger.info("Find user completed");
         return u;
     }
 
