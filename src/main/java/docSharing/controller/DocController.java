@@ -6,6 +6,8 @@ import docSharing.Entities.Document;
 import docSharing.Entities.User;
 import docSharing.service.AuthService;
 import docSharing.service.DocService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +28,17 @@ public class DocController {
 
     private static final Gson gson = new Gson();
 
+    private static Logger logger = LogManager.getLogger(DocController.class.getName());
+
+
     /**
      * NOT USED RIGHT NOW, WILL BE FIXED SOON
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String save(@RequestHeader("token") String token, @RequestBody Document document) {
+        logger.info("Save the document: " + document.getId() + "with this token: " + token);
         User user = authService.getCachedUser(token);
-
+        logger.info("User email is: " + user.getEmail());
         return docService.save(document);
     }
 
@@ -46,7 +52,6 @@ public class DocController {
     @RequestMapping(value = "/fetch", method = RequestMethod.POST)
     public ResponseEntity<String> getDocumentById(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
         User user = authService.getCachedUser(token);
-
         if (user != null) {
             Document temp = docService.getDocumentById(user, Long.parseLong(map.get("id")));
             if (temp != null) {
@@ -64,12 +69,14 @@ public class DocController {
      */
     @RequestMapping(value = "/roles", method = RequestMethod.POST)
     public ResponseEntity<String> getRolesByToken(@RequestHeader("token") String token) {
+        logger.info("Get the user role with token: " +token);
         User user = authService.getCachedUser(token);
-
         if (user != null) {
+            logger.info("User is not null");
             List<DocPermission> temp = docService.getRolesByEmail(user.getEmail());
             return ResponseEntity.ok(gson.toJson(temp));
         }
+        logger.warn("getRolesByToken is failed");
         return ResponseEntity.notFound().build();
     }
 }
