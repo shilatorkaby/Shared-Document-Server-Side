@@ -35,6 +35,13 @@ public class UserController {
 
     private static final Gson gson = new Gson();
 
+    /**
+     * gives all the sub-files, using map that includes directory name and its unique id
+     *
+     * @param token (Unique key for each logged user)
+     * @param map   (stores id and name of the document)
+     * @return json list of Directories, wrapped with ResponseEntity
+     */
     @RequestMapping(value = "/get/sub-files", method = RequestMethod.POST)
     public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
         logger.info("Get subs files with token: " + token);
@@ -59,6 +66,12 @@ public class UserController {
 
     }
 
+    /**
+     * gives all the sub-files from "root" directory
+     *
+     * @param token (Unique key for each logged user)
+     * @return json list of Directories, wrapped with ResponseEntity
+     */
     @RequestMapping(value = "/get/root/sub-files", method = RequestMethod.POST)
     public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token) {
         logger.info("Get subs files with token: " + token);
@@ -77,6 +90,13 @@ public class UserController {
         return ResponseEntity.badRequest().build();
     }
 
+    /**
+     * creates directory, and places it according the father's id directory
+     *
+     * @param token (Unique key for each logged user)
+     * @param map   (stores father id and name of the directory - together they are unique combination to locate a specific directory)
+     * @return json Directory, wrapped with ResponseEntity
+     */
     @RequestMapping(value = "/create-directory", method = RequestMethod.POST)
     public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
         logger.info("Create new dir with token: " + token);
@@ -100,6 +120,13 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * creates directory, and places it according the father's id directory
+     *
+     * @param token (Unique key for each logged user)
+     * @param document (DocumentBody class created for serialization)
+     * @return json Document, wrapped with ResponseEntity
+     */
     @RequestMapping(value = "/create-document", method = RequestMethod.POST)
     public ResponseEntity<String> createDocument(@RequestHeader("token") String token, @RequestBody DocumentBody document) {
     logger.info("Create document : " + document.getFileName());
@@ -117,6 +144,10 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
+
+    /**
+     * NOT USED RIGHT NOW, WILL BE FIXED SOON
+     */
     @RequestMapping(value = "change/dir", method = RequestMethod.POST)
     public ResponseEntity<String> changeDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
         logger.info("Change dir with token: " + token + "to directory : " + directory.getName());
@@ -131,6 +162,9 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * NOT USED RIGHT NOW, WILL BE FIXED SOON
+     */
     @RequestMapping(value = "delete/dir", method = RequestMethod.POST)
     public ResponseEntity<String> removeDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
         logger.info("Remove directory : " + directory.getName());
@@ -144,6 +178,9 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * NOT USED RIGHT NOW, WILL BE FIXED SOON
+     */
     @RequestMapping(value = "get/optional/dir", method = RequestMethod.GET)
     public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody Directory directory) {
         logger.info("get option to move to directory: " + directory.getName());
