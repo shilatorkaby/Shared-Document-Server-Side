@@ -3,6 +3,7 @@ package docSharing.service;
 import docSharing.Entities.Directory;
 import docSharing.Entities.Unconfirmed;
 import docSharing.Entities.User;
+import docSharing.controller.AuthController;
 import docSharing.repository.DirectoryRepository;
 import docSharing.repository.UnconfirmedRepository;
 import docSharing.repository.UserRepository;
@@ -19,6 +20,8 @@ import java.util.HashMap;
 @Service
 public class AuthService {
 
+    private static Logger logger = LogManager.getLogger(AuthService.class.getName());
+
     // users that did a valid login
     public HashMap<String, User> cachedUsers = new HashMap<>();
 
@@ -32,7 +35,6 @@ public class AuthService {
     private UnconfirmedRepository unconfirmedRepository;
     @Autowired
     private DirectoryRepository directoryRepository;
-    private final Logger logger;
 
     public AuthService() {
         this.logger = LogManager.getLogger(AuthService.class.getName());
@@ -41,15 +43,17 @@ public class AuthService {
     public User register(User user) {
 
         // email does exist
-        if (isEmailInDatabase(user.getEmail()))
+        if (isEmailInDatabase(user.getEmail())) {
+            logger.warn("Email not found in the database");
             return null;
+        }
 
         Unconfirmed verificationUser = new Unconfirmed(user.getEmail(), user.getPassword());
 
         sendEmail(verificationUser);
 
         unconfirmedRepository.save(verificationUser);
-
+        logger.info("Register completed");
         return user;
     }
 
@@ -76,8 +80,10 @@ public class AuthService {
             User user = new User(unconfirmed.getEmail(), unconfirmed.getPassword());
             userRepository.save(user);
             directoryRepository.save(new Directory(user.getId() * -1, "root"));
+            logger.info("Email verification completed");
             return "<h1>Email verification was done successfully</h1>";
         }
+        logger.warn("verify token not completed");
         return "You need to sign up first";
     }
 
@@ -86,14 +92,15 @@ public class AuthService {
         if (user != null && authenticateLogin(user)) {
             String token = Token.generate();
             cachedUsers.put(token, user);
+            logger.info("login succeed");
             return token;
         }
+        logger.warn("login failed.");
         return null;
     }
 
     boolean authenticateLogin(User user) {
         User temp = userRepository.findByEmail(user.getEmail());
-
         return temp != null && temp.getPassword().equals(user.getPassword());
     }
 
