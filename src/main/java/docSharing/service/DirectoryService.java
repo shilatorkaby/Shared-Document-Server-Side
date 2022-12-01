@@ -17,6 +17,10 @@ public class DirectoryService {
     private UserRepository userRepository;
     @Autowired
     private DirectoryRepository directoryRepository;
+    @Autowired
+    private DirectoryRepository documentLinkRepository;
+    @Autowired
+    private DirectoryRepository docPermissionRepository;
 
 
     public List<Directory> getOptionToMove(Directory directory) {
@@ -100,14 +104,57 @@ public class DirectoryService {
         return directoryRepository.findByFatherIdAndName(fatherId, name) == null;
     }
 
-    public boolean removeDir(Long dirId) {
-        Directory directory = directoryRepository.findById(dirId).orElse(null);
+    public boolean removeDir(Directory directory) {
+
         if (directory != null) {
-            directoryRepository.delete(directory);
-            return !directoryRepository.existsById(dirId);
+            if (directory.getDocId() != null) {
+                documentLinkRepository.deleteByDocId(directory.getDocId());
+                docPermissionRepository.deleteByDocId(directory.getDocId());
+                directoryRepository.deleteByDocId(directory.getDocId());
+            } else {
+                directoryRepository.delete(directory);
+                deleteDirectoryRec(directory);
+            }
+            return !directoryRepository.existsById(directory.getId());
         }
         return false;
     }
+
+    private void deleteDirectoryRec(Directory directory) {
+
+        List<Directory> subDirs = directoryRepository.findByFatherId(directory.getId());
+        if (subDirs.size() > 0) {
+            for (Directory dir : subDirs) {
+                if (dir.getDocId() != null) {
+                    documentLinkRepository.deleteByDocId(dir.getDocId());
+                    docPermissionRepository.deleteByDocId(dir.getDocId());
+                    directoryRepository.deleteByDocId(dir.getDocId());
+                    System.out.println(dir.getName() +" was deleted");
+                } else {
+                    deleteDirectoryRec(dir);
+                    directoryRepository.delete(dir);
+                }
+            }
+        }
+    }
+
+
+//    void deleteSubDirs(Long dirId) {
+//        List<Directory> subDirs = directoryRepository.findByFatherId(dirId);
+//        if (subDirs.size() > 0) {
+//            for (Directory dir : subDirs) {
+//                if (dir.getDocId() != null) {
+//                    documentLinkRepository.deleteByDocId(dir.getDocId());
+//                    docPermissionRepository.deleteByDocId(dir.getDocId());
+//                    directoryRepository.deleteByDocId(dir.getDocId());
+//                } else {
+//                    directoryRepository.delete(dir);
+//                    deleteSubDirs(dir.getId());
+//                }
+//
+//            }
+//        }
+//    }
 
     public Long getRootId(Long userId) {
         return directoryRepository.findByFatherId(userId * -1).get(0).getId();

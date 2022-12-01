@@ -33,6 +33,10 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
      @Transactional
      @Query("DELETE from Directory d where d.name = :name")
      void deleteByName(@Param("name") String name);
+     @Modifying
+     @Transactional
+     @Query("DELETE from Directory d where d.docId = :docId")
+     void deleteByDocId(@Param("docId") Long docId);
 
 
 

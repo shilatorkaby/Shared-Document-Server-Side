@@ -37,10 +37,6 @@ public class Directory {
         this.id = id;
     }
 
-    public void setDocId(Long docId) {
-        this.docId = docId;
-    }
-
     public Long getFatherId() {
         return fatherId;
     }
@@ -53,8 +49,16 @@ public class Directory {
         return name;
     }
 
-    public void setName(String subDirs) {
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getDocId() {
+        return docId;
+    }
+
+    public void setDocId(Long docId) {
+        this.docId = docId;
     }
 
     @Override
