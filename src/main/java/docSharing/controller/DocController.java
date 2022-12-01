@@ -26,11 +26,23 @@ public class DocController {
 
     private static final Gson gson = new Gson();
 
+    /**
+     * NOT USED RIGHT NOW, WILL BE FIXED SOON
+     */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String save(@RequestBody Document document) {
+    public String save(@RequestHeader("token") String token, @RequestBody Document document) {
+        User user = authService.getCachedUser(token);
+
         return docService.save(document);
     }
 
+    /**
+     * fetch data about a specific document using his unique document Id
+     *
+     * @param token (Unique key for each logged user)
+     * @param map   (stores the id of the document)
+     * @return json Document, wrapped with ResponseEntity
+     */
     @RequestMapping(value = "/fetch", method = RequestMethod.POST)
     public ResponseEntity<String> getDocumentById(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
         User user = authService.getCachedUser(token);
@@ -44,6 +56,12 @@ public class DocController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * receive list of roles of a specific user
+     *
+     * @param token (Unique key for each logged user)
+     * @return json list of DocPermission, wrapped with ResponseEntity
+     */
     @RequestMapping(value = "/roles", method = RequestMethod.POST)
     public ResponseEntity<String> getRolesByToken(@RequestHeader("token") String token) {
         User user = authService.getCachedUser(token);
