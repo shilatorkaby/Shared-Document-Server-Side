@@ -1,10 +1,13 @@
 package docSharing.controller;
 
-import docSharing.Entities.User;
+import com.google.gson.Gson;
+import docSharing.Entities.UserBody;
 import docSharing.service.AuthService;
+import docSharing.utils.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,36 +20,39 @@ import java.util.Map;
 public class AuthController {
 
     @Autowired
-    private final AuthService authService;
-    public final Validation validation; // should be static later on
+    AuthService authService;
 
-    private static Logger logger = LogManager.getLogger(AuthController.class.getName());
+    private static final Logger logger = LogManager.getLogger(AuthController.class.getName());
 
+    private static final Gson gson = new Gson();
 
     public AuthController() {
-        this.authService = new AuthService();
-        this.validation = new Validation();
     }
 
 
     /**
      * register endpoint, which at the end sends email verification using generated unique token
      *
-     * @param user (email and password)
+     * @param user (email and password type UserBody)
      * @return email verification
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<String> createUser(@RequestBody User user) {
-        logger.info("Creating user: " + user.getEmail());
-        User verifiedUser = authService.register(user);
-        if (verifiedUser != null) {
-            logger.info("verified user successfully completed!");
-            return ResponseEntity.ok().build();
+    public ResponseEntity<String> createUser(@RequestBody UserBody user) {
+        logger.info("register attempt with email: " + user.getEmail() + ", and password: " + user.getPassword());
+
+        // validate input before, we proceed to service
+        if (Validate.email(user.getEmail()) && Validate.password(user.getPassword())) {
+            UserBody verifiedUser = authService.register(user);
+            if (verifiedUser != null) {
+                logger.info("email verification has been sent");
+                return ResponseEntity.ok().build(); // 200
+            } else {
+                logger.warn("email verification has not been sent");
+                return ResponseEntity.badRequest().build(); // 400
+            }
         }
-        else{
-            logger.warn("verified user failed.");
-            return ResponseEntity.badRequest().build();
-        }
+        logger.warn("email or password validation did not pass, register failed");
+        return ResponseEntity.badRequest().build(); // 400
     }
 
     /**
@@ -57,13 +63,20 @@ public class AuthController {
      */
     @RequestMapping(value = "/verify/{token}")
     public ResponseEntity<String> emailVerification(@PathVariable("token") String token) {
-        logger.info("Email verification with this token:  " + token);
+
+        token = authService.verifyToken(token);
+
         if (token != null) {
-            logger.info("token is not null" + token);
-            return ResponseEntity.ok(authService.verifyToken(token));
+            logger.info(token + " is legit");
+
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.add("token", token);
+
+            return ResponseEntity.ok().headers(responseHeaders).body("<h1>Email verification was done successfully</h1>");  // 200
         }
-        logger.warn("token is null");
-        return ResponseEntity.notFound().build();
+
+        logger.warn("token is forged");
+        return ResponseEntity.notFound().build(); // 404
     }
 
 
@@ -74,22 +87,24 @@ public class AuthController {
      * @return response status - 200 or 404
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
-        logger.info("login with user:  " + user.getEmail());
-        if (user != null) {
-            logger.info("User is not null");
-            validation.isValidEmail(user.getEmail());
-            validation.isValidPassword(user.getPassword());
+    public ResponseEntity<String> login(@RequestBody UserBody user) {
+        logger.info("login attempt with email: " + user.getEmail() + ", and password: " + user.getPassword());
+
+        // validate input before, we proceed to service
+        if (Validate.email(user.getEmail()) && Validate.password(user.getPassword())) {
+
             String token = authService.login(user);
-            logger.info("User token is:  " + token);
+
             if (token != null) {
-                logger.info("Token is found");
+                logger.info("successful login, user's token:  " + token);
+
                 Map<String, String> map = new HashMap<>();
                 map.put("token", token);
-                return ResponseEntity.ok(map);
+
+                return ResponseEntity.ok(gson.toJson(map));
             }
         }
-        logger.info("login failed.");
+        logger.warn("email or password validation did not pass, login failed");
         return ResponseEntity.notFound().build();
     }
 }

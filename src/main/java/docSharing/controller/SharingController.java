@@ -1,10 +1,7 @@
 package docSharing.controller;
 
 import com.google.gson.Gson;
-import docSharing.Entities.Contender;
-import docSharing.Entities.DocumentLink;
-import docSharing.Entities.User;
-import docSharing.Entities.UserRole;
+import docSharing.Entities.*;
 import docSharing.service.AuthService;
 import docSharing.service.SharingService;
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +35,7 @@ public class SharingController {
     @RequestMapping(value = "/share/via/email", method = RequestMethod.POST)
     public ResponseEntity<String> shareViaEmail(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
         logger.info("Share via email , token is: " + token);
-        User user = authService.getCachedUser(token);
+        UserBody user = authService.getCachedUser(token);
 
         if (user != null) {
             Long docId = Long.parseLong(map.get("docId"));
@@ -65,7 +62,7 @@ public class SharingController {
         Gson gson = new Gson();
         Map<String, String> map = gson.fromJson(json, HashMap.class);
 
-        User user = authService.getCachedUser(token);
+        UserBody user = authService.getCachedUser(token);
 
         if (user != null) {
             DocumentLink documentLink = sharingService.shareViaLink(user.getEmail(), (HashMap<String, String>) map);

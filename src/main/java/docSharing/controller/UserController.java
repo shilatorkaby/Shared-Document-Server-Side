@@ -1,10 +1,7 @@
 package docSharing.controller;
 
 import com.google.gson.Gson;
-import docSharing.Entities.Directory;
-import docSharing.Entities.Document;
-import docSharing.Entities.DocumentBody;
-import docSharing.Entities.User;
+import docSharing.Entities.*;
 import docSharing.service.AuthService;
 import docSharing.service.DirectoryService;
 import docSharing.service.UserService;
@@ -44,8 +41,9 @@ public class UserController {
      */
     @RequestMapping(value = "/get/sub-files", method = RequestMethod.POST)
     public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+
         logger.info("Get subs files with token: " + token);
-        User user = authService.getCachedUser(token);
+        UserBody user = authService.getCachedUser(token);
         if (map != null) {
             Directory directory = new Directory(null, map.get("name"));
             directory.setId(Long.parseLong(map.get("id")));
@@ -75,7 +73,7 @@ public class UserController {
     @RequestMapping(value = "/get/root/sub-files", method = RequestMethod.POST)
     public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token) {
         logger.info("Get subs files with token: " + token);
-        User user = authService.getCachedUser(token);
+        UserBody user = authService.getCachedUser(token);
 
         if (user != null) {
 
@@ -102,7 +100,7 @@ public class UserController {
     @RequestMapping(value = "/create-directory", method = RequestMethod.POST)
     public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
         logger.info("Create new dir with token: " + token);
-        User user = authService.getCachedUser(token);
+        UserBody user = authService.getCachedUser(token);
 
         if (map != null && user != null) {
             Directory newDir;
@@ -123,7 +121,7 @@ public class UserController {
     }
 
     /**
-     * creates directory, and places it according the father's id directory
+     * creates directory, and places it according to the father's id directory
      *
      * @param token    (Unique key for each logged user)
      * @param document (DocumentBody class created for serialization)
@@ -132,7 +130,7 @@ public class UserController {
     @RequestMapping(value = "/create-document", method = RequestMethod.POST)
     public ResponseEntity<String> createDocument(@RequestHeader("token") String token, @RequestBody DocumentBody document) {
         logger.info("Create document : " + document.getFileName());
-        User user = authService.getCachedUser(token);
+        UserBody user = authService.getCachedUser(token);
 
         if (user != null) {
             Document temp = userService.createDocument(user, document);
@@ -145,7 +143,6 @@ public class UserController {
         logger.warn("Create document failed.");
         return ResponseEntity.notFound().build();
     }
-
 
     /**
      * NOT USED RIGHT NOW, WILL BE FIXED SOON
@@ -202,6 +199,4 @@ public class UserController {
         logger.warn("get option to move to directory failed.");
         return ResponseEntity.notFound().build();
     }
-
-
 }

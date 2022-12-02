@@ -5,65 +5,30 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends UserBody {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(unique = true)
-    private String email;
-    private String password;
 
     public User(){}
 
     public User(String email, String password) {
-        this.email = email;
-        this.password = password;
+
+        super(email, password);
     }
 
     public Long getId() {
         return id;
     }
 
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-
-        User user = (User) o;
-
-        if (id != user.id) return false;
-        if (!Objects.equals(email, user.email)) return false;
-        return Objects.equals(password, user.password);
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 '}';
     }
 }

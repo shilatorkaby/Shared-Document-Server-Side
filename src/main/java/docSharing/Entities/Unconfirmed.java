@@ -5,42 +5,44 @@ import docSharing.utils.Token;
 import javax.persistence.*;
 
 @Entity
-public class Unconfirmed {
+public class Unconfirmed extends UserBody{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
 
     private String token;
-
-    private String email;
-
-    private String password;
-
-    public Long getId() {
-        return id;
-    }
-
+    
+    
     public Unconfirmed() {
         this.token = Token.generate();
     }
 
     public Unconfirmed(String email, String password) {
+        super(email, password);
         this.token = Token.generate();
-        this.email = email;
-        this.password = password;
     }
 
-
-    public String getEmail() {
-        return email;
+    public Long getId() {
+        return id;
     }
-
-    public String getPassword() {
-        return password;
-    }
-
+    
     public String getToken() {
         return token;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    @Override
+    public String toString() {
+        return "Unconfirmed{" +
+                "id=" + id +
+                ", token='" + token + '\'' +
+                '}';
     }
 }

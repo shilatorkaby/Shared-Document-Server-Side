@@ -3,6 +3,7 @@ package docSharing.service;
 import docSharing.Entities.Directory;
 import docSharing.Entities.Unconfirmed;
 import docSharing.Entities.User;
+import docSharing.Entities.UserBody;
 import docSharing.repository.DirectoryRepository;
 import docSharing.repository.UnconfirmedRepository;
 import docSharing.repository.UserRepository;
@@ -20,7 +21,7 @@ import java.util.HashMap;
 public class AuthService {
 
     // users that did a valid login
-    public HashMap<String, User> cachedUsers = new HashMap<>();
+    public HashMap<String, UserBody> cachedUsers = new HashMap<>();
 
     @Autowired
     private JavaMailSender mailSender;
@@ -38,7 +39,7 @@ public class AuthService {
         this.logger = LogManager.getLogger(AuthService.class.getName());
     }
 
-    public User register(User user) {
+    public UserBody register(UserBody user) {
 
         // email does exist
         if (isEmailInDatabase(user.getEmail()))
@@ -72,35 +73,31 @@ public class AuthService {
         Unconfirmed unconfirmed = unconfirmedRepository.findByToken(token);
 
         if (unconfirmed != null) {
+
             unconfirmedRepository.delete(unconfirmed);
+
             User user = new User(unconfirmed.getEmail(), unconfirmed.getPassword());
             userRepository.save(user);
+
+            // each user creates by default a "root" directory
             directoryRepository.save(new Directory(user.getId() * -1, "root"));
-            return "<h1>Email verification was done successfully</h1>";
+            return token;
+            // return "<h1>Email verification was done successfully</h1>";
         }
-        return "You need to sign up first";
+        return null;
+        // return "You need to sign up first";
     }
 
-    public String login(User user) {
+    public String login(UserBody temp) {
 
-        if (user != null && authenticateLogin(user)) {
+        User user = userRepository.findByEmail(temp.getEmail());
+
+        if (user.getPassword().equals(temp.getPassword())) {
             String token = Token.generate();
             cachedUsers.put(token, user);
             return token;
         }
         return null;
-    }
-
-    /**
-     * authenticates login
-     *
-     * @param user
-     * @return
-     */
-    boolean authenticateLogin(User user) {
-        User temp = userRepository.findByEmail(user.getEmail());
-
-        return temp != null && temp.getPassword().equals(user.getPassword());
     }
 
     /**
@@ -119,7 +116,7 @@ public class AuthService {
      * @param token (Unique key for each logged user)
      * @return User
      */
-    public User getCachedUser(String token) {
+    public UserBody getCachedUser(String token) {
         return (token == null) ? null : cachedUsers.get(token);
     }
 }
