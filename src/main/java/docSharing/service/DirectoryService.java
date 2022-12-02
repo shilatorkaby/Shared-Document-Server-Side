@@ -129,7 +129,7 @@ public class DirectoryService {
                     documentLinkRepository.deleteByDocId(dir.getDocId());
                     docPermissionRepository.deleteByDocId(dir.getDocId());
                     directoryRepository.deleteByDocId(dir.getDocId());
-                    System.out.println(dir.getName() +" was deleted");
+                    System.out.println(dir.getName() + " was deleted");
                 } else {
                     deleteDirectoryRec(dir);
                     directoryRepository.delete(dir);
@@ -138,26 +138,5 @@ public class DirectoryService {
         }
     }
 
-
-//    void deleteSubDirs(Long dirId) {
-//        List<Directory> subDirs = directoryRepository.findByFatherId(dirId);
-//        if (subDirs.size() > 0) {
-//            for (Directory dir : subDirs) {
-//                if (dir.getDocId() != null) {
-//                    documentLinkRepository.deleteByDocId(dir.getDocId());
-//                    docPermissionRepository.deleteByDocId(dir.getDocId());
-//                    directoryRepository.deleteByDocId(dir.getDocId());
-//                } else {
-//                    directoryRepository.delete(dir);
-//                    deleteSubDirs(dir.getId());
-//                }
-//
-//            }
-//        }
-//    }
-
-    public Long getRootId(Long userId) {
-        return directoryRepository.findByFatherId(userId * -1).get(0).getId();
-    }
 
 }

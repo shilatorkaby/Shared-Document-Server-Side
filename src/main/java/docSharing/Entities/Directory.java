@@ -1,6 +1,9 @@
 package docSharing.Entities;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class Directory {
@@ -25,7 +28,8 @@ public class Directory {
         this.name = name;
         this.docId = fileId;
     }
-  public Directory(String name) {
+
+    public Directory(String name) {
         this.name = name;
     }
 

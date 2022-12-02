@@ -55,8 +55,7 @@ public class UserController {
                 if (subFolders != null) {
                     logger.info("Get subs files successfully complete");
                     return ResponseEntity.ok(gson.toJson(subFolders));
-                }
-                else{
+                } else {
                     logger.warn("Sub folder is null");
                     return ResponseEntity.notFound().build();
                 }
@@ -84,7 +83,7 @@ public class UserController {
             if (subFolders != null) {
                 logger.info("Get subs files successfully complete");
                 return ResponseEntity.ok(gson.toJson(subFolders));
-            } else{
+            } else {
                 logger.warn("Sub folder is null");
                 return ResponseEntity.notFound().build();
             }
@@ -126,13 +125,13 @@ public class UserController {
     /**
      * creates directory, and places it according the father's id directory
      *
-     * @param token (Unique key for each logged user)
+     * @param token    (Unique key for each logged user)
      * @param document (DocumentBody class created for serialization)
      * @return json Document, wrapped with ResponseEntity
      */
     @RequestMapping(value = "/create-document", method = RequestMethod.POST)
     public ResponseEntity<String> createDocument(@RequestHeader("token") String token, @RequestBody DocumentBody document) {
-    logger.info("Create document : " + document.getFileName());
+        logger.info("Create document : " + document.getFileName());
         User user = authService.getCachedUser(token);
 
         if (user != null) {
@@ -186,6 +185,8 @@ public class UserController {
      */
     @RequestMapping(value = "/get/optional/dir", method = RequestMethod.POST)
     public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+
+//        logger.info("get option to move to directory: " + directory.getName());
 
         Directory directory = new Directory();
         directory.setId(Long.parseLong(map.get("id")));
