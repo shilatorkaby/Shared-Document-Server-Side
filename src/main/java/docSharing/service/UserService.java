@@ -24,8 +24,9 @@ public class UserService {
     public UserService() {
     }
 
-    public Document createDocument(User user, DocumentBody documentBody) {
-        user.setId(userRepository.findByEmail(user.getEmail()).getId());
+    public Document createDocument(UserBody temp, DocumentBody documentBody) {
+
+        User user = userRepository.findByEmail(temp.getEmail());
         Long fatherId = null;
 
         if (documentBody != null && user.getId() != null && !findDoc(user, documentBody.getFileName())) {
