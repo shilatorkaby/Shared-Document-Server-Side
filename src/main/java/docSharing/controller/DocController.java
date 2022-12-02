@@ -3,7 +3,6 @@ package docSharing.controller;
 import com.google.gson.Gson;
 import docSharing.Entities.DocPermission;
 import docSharing.Entities.Document;
-import docSharing.Entities.User;
 import docSharing.Entities.UserBody;
 import docSharing.service.AuthService;
 import docSharing.service.DocService;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -38,6 +36,7 @@ public class DocController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<String> save(@RequestHeader("token") String token, @RequestBody Document document) {
         logger.info("Save the document: " + document.getId() + " with this token: " + token);
+
         UserBody user = authService.getCachedUser(token);
         if (user != null && document.getId() != null) {
             logger.info("User email is: " + user.getEmail());
@@ -57,14 +56,14 @@ public class DocController {
      * fetch data about a specific document using his unique document Id
      *
      * @param token (Unique key for each logged user)
-     * @param map   (stores the id of the document)
+     * @param id    (stores the id of the document)
      * @return json Document, wrapped with ResponseEntity
      */
     @RequestMapping(value = "/fetch", method = RequestMethod.POST)
-    public ResponseEntity<String> getDocumentById(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+    public ResponseEntity<String> getDocumentById(@RequestHeader("token") String token, @RequestBody Long id) {
         UserBody user = authService.getCachedUser(token);
-        if (user != null) {
-            Document temp = docService.getDocumentById(user, Long.parseLong(map.get("id")));
+        if (user != null && id != null) {
+            Document temp = docService.getDocumentById(user, id);
             if (temp != null) {
                 return ResponseEntity.ok(gson.toJson(temp));
             }

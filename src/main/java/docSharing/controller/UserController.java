@@ -41,6 +41,7 @@ public class UserController {
      */
     @RequestMapping(value = "/get/sub-files", method = RequestMethod.POST)
     public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+
         logger.info("Get subs files with token: " + token);
         UserBody user = authService.getCachedUser(token);
         if (map != null) {
@@ -120,7 +121,7 @@ public class UserController {
     }
 
     /**
-     * creates directory, and places it according the father's id directory
+     * creates directory, and places it according to the father's id directory
      *
      * @param token    (Unique key for each logged user)
      * @param document (DocumentBody class created for serialization)
@@ -142,7 +143,6 @@ public class UserController {
         logger.warn("Create document failed.");
         return ResponseEntity.notFound().build();
     }
-
 
     /**
      * NOT USED RIGHT NOW, WILL BE FIXED SOON
@@ -199,6 +199,4 @@ public class UserController {
         logger.warn("get option to move to directory failed.");
         return ResponseEntity.notFound().build();
     }
-
-
 }
