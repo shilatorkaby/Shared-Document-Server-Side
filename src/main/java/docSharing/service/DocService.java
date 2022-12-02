@@ -19,12 +19,12 @@ public class DocService {
     private DocPermissionRepository docPermissionRepository;
 
 
-    public String save(Document document) {
+    public Document save(Document document) {
         if (getDocFromDatabase(document) != null) {
             docRepository.updateFileContent(document.getId(), document.getFileContent());
-            return "file's content was updated";
+            return docRepository.findById(document.getId()).orElse(null);
         }
-        return "File doesn't exists";
+        return null;
     }
 
     Document getDocFromDatabase(Document document) {

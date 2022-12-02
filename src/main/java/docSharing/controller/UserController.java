@@ -49,13 +49,13 @@ public class UserController {
         if (map != null) {
             Directory directory = new Directory(null, map.get("name"));
             directory.setId(Long.parseLong(map.get("id")));
+
             if (user != null) {
                 List<Directory> subFolders = directoryService.getSubDirs(directory);
                 if (subFolders != null) {
                     logger.info("Get subs files successfully complete");
                     return ResponseEntity.ok(gson.toJson(subFolders));
-                }
-                else{
+                } else {
                     logger.warn("Sub folder is null");
                     return ResponseEntity.notFound().build();
                 }
@@ -76,12 +76,14 @@ public class UserController {
     public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token) {
         logger.info("Get subs files with token: " + token);
         User user = authService.getCachedUser(token);
+
         if (user != null) {
+
             List<Directory> subFolders = directoryService.getSubDirs(user);
             if (subFolders != null) {
                 logger.info("Get subs files successfully complete");
                 return ResponseEntity.ok(gson.toJson(subFolders));
-            } else{
+            } else {
                 logger.warn("Sub folder is null");
                 return ResponseEntity.notFound().build();
             }
@@ -123,13 +125,13 @@ public class UserController {
     /**
      * creates directory, and places it according the father's id directory
      *
-     * @param token (Unique key for each logged user)
+     * @param token    (Unique key for each logged user)
      * @param document (DocumentBody class created for serialization)
      * @return json Document, wrapped with ResponseEntity
      */
     @RequestMapping(value = "/create-document", method = RequestMethod.POST)
     public ResponseEntity<String> createDocument(@RequestHeader("token") String token, @RequestBody DocumentBody document) {
-    logger.info("Create document : " + document.getFileName());
+        logger.info("Create document : " + document.getFileName());
         User user = authService.getCachedUser(token);
 
         if (user != null) {
@@ -168,8 +170,8 @@ public class UserController {
     @RequestMapping(value = "delete/dir", method = RequestMethod.POST)
     public ResponseEntity<String> removeDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
         logger.info("Remove directory : " + directory.getName());
-        if (authService.getCachedUser(token) != null && directory != null) {
-            if (directoryService.removeDir(directory.getId())) {
+        if (authService.getCachedUser(token) != null && directory.getId() != null) {
+            if (directoryService.removeDir(directory)) {
                 logger.info("Remove dir successfully complete");
                 return ResponseEntity.ok("Directory was removed successfully");
             }
@@ -181,15 +183,15 @@ public class UserController {
     /**
      * NOT USED RIGHT NOW, WILL BE FIXED SOON
      */
-
     @RequestMapping(value = "/get/optional/dir", method = RequestMethod.POST)
     public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
-        
-        logger.info("get option to move to directory: " + directory.getName());
+
+//        logger.info("get option to move to directory: " + directory.getName());
 
         Directory directory = new Directory();
         directory.setId(Long.parseLong(map.get("id")));
 
+        logger.info("get option to move to directory: " + directory.getName());
         if (authService.getCachedUser(token) != null && directory != null) {
             List<Directory> optionalFolders = directoryService.getOptionToMove(directory);
             if (optionalFolders != null) {

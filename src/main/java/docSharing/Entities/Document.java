@@ -57,8 +57,10 @@ public class Document {
     @Override
     public String toString() {
         return "Document{" +
-                "ownerEmail='" + email + '\'' +
+                "id=" + id +
+                ", email='" + email + '\'' +
                 ", fileName='" + fileName + '\'' +
+                ", fileContent='" + fileContent + '\'' +
                 '}';
     }
 }

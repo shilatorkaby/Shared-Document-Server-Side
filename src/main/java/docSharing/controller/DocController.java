@@ -35,11 +35,21 @@ public class DocController {
      * NOT USED RIGHT NOW, WILL BE FIXED SOON
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String save(@RequestHeader("token") String token, @RequestBody Document document) {
-        logger.info("Save the document: " + document.getId() + "with this token: " + token);
+    public ResponseEntity<String> save(@RequestHeader("token") String token, @RequestBody Document document) {
+        logger.info("Save the document: " + document.getId() + " with this token: " + token);
         User user = authService.getCachedUser(token);
-        logger.info("User email is: " + user.getEmail());
-        return docService.save(document);
+        if (user != null && document.getId() != null) {
+            logger.info("User email is: " + user.getEmail());
+            Document updatedDoc = docService.save(document);
+            System.out.println(updatedDoc);
+            if (updatedDoc != null) {
+                logger.info("file's content was updated successfully: " + updatedDoc);
+                return ResponseEntity.ok(gson.toJson(updatedDoc));
+
+            }
+        }
+        logger.error("File doesn't exists");
+        return ResponseEntity.notFound().build();
     }
 
     /**
@@ -69,7 +79,7 @@ public class DocController {
      */
     @RequestMapping(value = "/roles", method = RequestMethod.POST)
     public ResponseEntity<String> getRolesByToken(@RequestHeader("token") String token) {
-        logger.info("Get the user role with token: " +token);
+        logger.info("Get the user role with token: " + token);
         User user = authService.getCachedUser(token);
         if (user != null) {
             logger.info("User is not null");

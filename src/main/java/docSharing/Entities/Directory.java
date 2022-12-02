@@ -1,6 +1,9 @@
 package docSharing.Entities;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class Directory {
@@ -25,7 +28,8 @@ public class Directory {
         this.name = name;
         this.docId = fileId;
     }
-  public Directory(String name) {
+
+    public Directory(String name) {
         this.name = name;
     }
 
@@ -35,10 +39,6 @@ public class Directory {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setDocId(Long docId) {
-        this.docId = docId;
     }
 
     public Long getFatherId() {
@@ -53,8 +53,16 @@ public class Directory {
         return name;
     }
 
-    public void setName(String subDirs) {
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getDocId() {
+        return docId;
+    }
+
+    public void setDocId(Long docId) {
+        this.docId = docId;
     }
 
     @Override

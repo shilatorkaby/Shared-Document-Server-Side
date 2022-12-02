@@ -29,11 +29,9 @@ public class UserService {
         Long fatherId = null;
 
         if (documentBody != null && user.getId() != null && !findDoc(user, documentBody.getFileName())) {
-            if (documentBody.getFatherId() != null && directoryRepository.existsById(documentBody.getFatherId()))
-            {
+            if (documentBody.getFatherId() != null && directoryRepository.existsById(documentBody.getFatherId())) {
                 fatherId = documentBody.getFatherId();
-            } else if (documentBody.getFatherId() == null)
-            {
+            } else if (documentBody.getFatherId() == null) {
                 fatherId = directoryRepository.findByFatherId(user.getId() * -1).get(0).getId();
             }
             if (fatherId != null) {
@@ -43,7 +41,8 @@ public class UserService {
 
                 directoryRepository.save(new Directory(fatherId, documentBody.getFileName(), newDocument.getId()));
                 return newDocument;
-            }        }
+            }
+        }
         return null;
     }
 
