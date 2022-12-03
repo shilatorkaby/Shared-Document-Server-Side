@@ -101,11 +101,11 @@ public class AuthController {
                 Map<String, String> map = new HashMap<>();
                 map.put("token", token);
 
-                return ResponseEntity.ok(gson.toJson(map));
+                return ResponseEntity.ok(gson.toJson(map)); // 200
             }
         }
         logger.warn("email or password validation did not pass, login failed");
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.notFound().build(); // 404
     }
 }
 
