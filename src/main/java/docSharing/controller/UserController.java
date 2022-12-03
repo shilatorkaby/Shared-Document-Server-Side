@@ -28,35 +28,31 @@ public class UserController {
     @Autowired
     DirectoryService directoryService;
 
-    private static Logger logger = LogManager.getLogger(UserController.class.getName());
+    private static final Logger logger = LogManager.getLogger(UserController.class.getName());
 
     private static final Gson gson = new Gson();
 
     /**
      * gives all the sub-files, using map that includes directory name and its unique id
      *
-     * @param token (Unique key for each logged user)
-     * @param map   (stores id and name of the document)
+     * @param token     (Unique key for each logged user)
+     * @param directory (stores id and name of the document)
      * @return json list of Directories, wrapped with ResponseEntity
      */
     @RequestMapping(value = "/get/sub-files", method = RequestMethod.POST)
-    public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+    public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token, @RequestBody Directory directory) {
 
         logger.info("Get subs files with token: " + token);
         UserBody user = authService.getCachedUser(token);
-        if (map != null) {
-            Directory directory = new Directory(null, map.get("name"));
-            directory.setId(Long.parseLong(map.get("id")));
+        if (user != null && directory.getId() != null && directory.getName() != null) {
 
-            if (user != null) {
-                List<Directory> subFolders = directoryService.getSubDirs(directory);
-                if (subFolders != null) {
-                    logger.info("Get subs files successfully complete");
-                    return ResponseEntity.ok(gson.toJson(subFolders));
-                } else {
-                    logger.warn("Sub folder is null");
-                    return ResponseEntity.notFound().build();
-                }
+            List<Directory> subFolders = directoryService.getSubDirs(directory);
+            if (subFolders != null) {
+                logger.info("Get subs files successfully complete");
+                return ResponseEntity.ok(gson.toJson(subFolders));
+            } else {
+                logger.warn("Sub folder is null");
+                return ResponseEntity.notFound().build();
             }
         }
         logger.warn("Get Sub files failed.");
@@ -94,22 +90,16 @@ public class UserController {
      * creates directory, and places it according the father's id directory
      *
      * @param token (Unique key for each logged user)
-     * @param map   (stores father id and name of the directory - together they are unique combination to locate a specific directory)
+     * @param directory  (stores father id and name of the directory - together they are unique combination to locate a specific directory)
      * @return json Directory, wrapped with ResponseEntity
      */
     @RequestMapping(value = "/create-directory", method = RequestMethod.POST)
-    public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+    public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
         logger.info("Create new dir with token: " + token);
         UserBody user = authService.getCachedUser(token);
 
-        if (map != null && user != null) {
-            Directory newDir;
-            if (map.get("fatherId") != null) {
-                newDir = directoryService.addNewDir(user, new Directory(Long.parseLong(map.get("fatherId")), map.get("name")));
-            } else {
-                logger.warn("map.get(fatherId) is null");
-                newDir = directoryService.addNewDir(user, new Directory(null, map.get("name")));
-            }
+        if (user != null && directory.getName() != null) {
+            Directory newDir = directoryService.addNewDir(user, new Directory((directory.getFatherId() != null) ? directory.getFatherId() : null, directory.getName()));
             if (newDir != null) {
                 logger.info("Create new dir with token: " + token);
                 return ResponseEntity.ok(gson.toJson(newDir));
@@ -181,12 +171,12 @@ public class UserController {
      * NOT USED RIGHT NOW, WILL BE FIXED SOON
      */
     @RequestMapping(value = "/get/optional/dir", method = RequestMethod.POST)
-    public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+    public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody Long id) {
 
-//        logger.info("get option to move to directory: " + directory.getName());
+        // logger.info("get option to move to directory: " + directory.getName());
 
         Directory directory = new Directory();
-        directory.setId(Long.parseLong(map.get("id")));
+        directory.setId(id);
 
         logger.info("get option to move to directory: " + directory.getName());
         if (authService.getCachedUser(token) != null && directory != null) {
