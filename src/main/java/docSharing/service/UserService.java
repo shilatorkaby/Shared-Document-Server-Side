@@ -24,6 +24,13 @@ public class UserService {
     public UserService() {
     }
 
+    /**
+     * creates document if the user passes authentication, and there are no duplicate names
+     *
+     * @param temp
+     * @param documentBody
+     * @return document
+     */
     public Document createDocument(UserBody temp, DocumentBody documentBody) {
 
         User user = userRepository.findByEmail(temp.getEmail());
@@ -47,22 +54,25 @@ public class UserService {
         return null;
     }
 
+    /**
+     * returns all documents of a specific user, using email as an identifier
+     *
+     * @param user
+     * @return list of Documents
+     */
     public List<Document> getAllDocs(User user) {
         return docRepository.findByEmail(user.getEmail());
     }
 
 
+    /**
+     * returns a specific document, using document name and email of a user as an identifier
+     *
+     * @param user
+     * @param documentName
+     * @return Document
+     */
     boolean findDoc(User user, String documentName) {
-
         return docRepository.findByNameAndEmail(documentName, user.getEmail()) != null;
     }
-
-    public User findUser(User user) throws SQLDataException {
-        User u = userRepository.findByEmail(user.getEmail());
-        if (u == null) {
-            throw new SQLDataException(String.format("Email %s not exists in users table", user.getEmail()));
-        }
-        return u;
-    }
-
 }

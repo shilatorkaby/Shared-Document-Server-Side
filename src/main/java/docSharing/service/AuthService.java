@@ -39,6 +39,12 @@ public class AuthService {
         this.logger = LogManager.getLogger(AuthService.class.getName());
     }
 
+    /**
+     * authenticates if the given user doesn't exist in the database, if so sends email for verification
+     *
+     * @param user (email and password type UserBody)
+     * @return user, if something went wrong it returns null
+     */
     public UserBody register(UserBody user) {
 
         // email does exist
@@ -54,6 +60,11 @@ public class AuthService {
         return user;
     }
 
+    /**
+     * sends email verification for optional user
+     *
+     * @param unconfirmed (email, password and unique token type Unconfirmed)
+     */
     private void sendEmail(Unconfirmed unconfirmed) {
 
         String destination = unconfirmed.getEmail();
@@ -68,6 +79,12 @@ public class AuthService {
         logger.info("mail sent successfully");
     }
 
+    /**
+     * verify the given token if it is not forged
+     *
+     * @param token (unique String)
+     * @return token, if something went wrong returns null
+     */
     public String verifyToken(String token) {
 
         Unconfirmed unconfirmed = unconfirmedRepository.findByToken(token);
@@ -88,6 +105,12 @@ public class AuthService {
         // return "You need to sign up first";
     }
 
+    /**
+     * authenticates if the given user is in the database
+     *
+     * @param temp (email and password type UserBody)
+     * @return token (unique String that allows further actions)
+     */
     public String login(UserBody temp) {
 
         User user = userRepository.findByEmail(temp.getEmail());

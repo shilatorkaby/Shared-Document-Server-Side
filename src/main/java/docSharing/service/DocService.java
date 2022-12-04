@@ -20,6 +20,12 @@ public class DocService {
     private DocPermissionRepository docPermissionRepository;
 
 
+    /**
+     * saves the document's content in the database
+     *
+     * @param document
+     * @return document, if something went wrong returns null
+     */
     public Document save(Document document) {
         if (getDocFromDatabase(document) != null) {
             docRepository.updateFileContent(document.getId(), document.getFileContent());
@@ -28,11 +34,25 @@ public class DocService {
         return null;
     }
 
+    /**
+     * gets document from database by id
+     *
+     * @param document
+     * @return document, if something went wrong returns null
+     */
     Document getDocFromDatabase(Document document) {
         return docRepository.findByDocId(document.getId());
     }
 
 
+    /**
+     * get document from database by email and id (together they are unique)
+     * we first check if the given user has the right permission to do so
+     *
+     * @param user
+     * @param id
+     * @return document, if something went wrong returns null
+     */
     public Document getDocumentById(UserBody user, Long id) {
 
         DocPermission docPermission = docPermissionRepository.findByDocIdAndEmail(id, user.getEmail());
@@ -40,6 +60,12 @@ public class DocService {
         return (docPermission != null) ? docRepository.findByDocId(id) : null;
     }
 
+    /**
+     * gets lists of roles of a specific user, using their email
+     *
+     * @param email
+     * @return list of roles
+     */
     public List<DocPermission> getRolesByEmail(String email) {
 
         return docPermissionRepository.findAllPermissionsByEmail(email);
