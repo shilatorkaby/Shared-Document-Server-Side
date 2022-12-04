@@ -98,20 +98,16 @@ public class UserController {
      * @return json Directory, wrapped with ResponseEntity
      */
     @RequestMapping(value = "/create-directory", method = RequestMethod.POST)
-    public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+    public ResponseEntity<String> createNewDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
         logger.info("Create new dir with token: " + token);
         UserBody user = authService.getCachedUser(token);
 
-        if (map != null && user != null) {
-            Directory newDir;
-            if (map.get("fatherId") != null) {
-                newDir = directoryService.addNewDir(user, new Directory(Long.parseLong(map.get("fatherId")), map.get("name")));
-            } else {
-                logger.warn("map.get(fatherId) is null");
-                newDir = directoryService.addNewDir(user, new Directory(null, map.get("name")));
-            }
+        if (directory.getName() != null && user != null) {
+
+            Directory newDir = directoryService.addNewDir(user, directory);
+
             if (newDir != null) {
-                logger.info("Create new dir with token: " + token);
+                logger.info(newDir.getName() +" was created successfully" + token);
                 return ResponseEntity.ok(gson.toJson(newDir));
             }
             logger.warn("New dir is null");
@@ -150,7 +146,7 @@ public class UserController {
     @RequestMapping(value = "change/dir", method = RequestMethod.POST)
     public ResponseEntity<String> changeDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
         logger.info("Change dir with token: " + token + "to directory : " + directory.getName());
-        if (authService.getCachedUser(token) != null && directory != null) {
+        if (authService.getCachedUser(token) != null && directory.getId() != null) {
             Directory changedDir = directoryService.changeDir(directory);
             if (changedDir != null) {
                 logger.info("Change dir successfully complete");
@@ -181,15 +177,15 @@ public class UserController {
      * NOT USED RIGHT NOW, WILL BE FIXED SOON
      */
     @RequestMapping(value = "/get/optional/dir", method = RequestMethod.POST)
-    public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+    public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody Directory directory) {
 
 //        logger.info("get option to move to directory: " + directory.getName());
 
-        Directory directory = new Directory();
-        directory.setId(Long.parseLong(map.get("id")));
+//        Directory directory = new Directory();
+//        directory.setId(Long.parseLong(map.get("id")));
+        if (authService.getCachedUser(token) != null && directory.getId() != null) {
+            logger.info("get option to move to directory: " + directory.getName());
 
-        logger.info("get option to move to directory: " + directory.getName());
-        if (authService.getCachedUser(token) != null && directory != null) {
             List<Directory> optionalFolders = directoryService.getOptionToMove(directory);
             if (optionalFolders != null) {
                 logger.info("get option to move successfully complete");
