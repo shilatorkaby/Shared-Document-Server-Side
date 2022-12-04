@@ -40,15 +40,11 @@ public class UserController {
      * @return json list of Directories, wrapped with ResponseEntity
      */
     @RequestMapping(value = "/get/sub-files", method = RequestMethod.POST)
-    public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+    public ResponseEntity<String> getSubFiles(@RequestHeader("token") String token, @RequestBody Directory directory) {
 
         logger.info("Get subs files with token: " + token);
         UserBody user = authService.getCachedUser(token);
-        if (map != null) {
-            Directory directory = new Directory(null, map.get("name"));
-            directory.setId(Long.parseLong(map.get("id")));
-
-            if (user != null) {
+        if (user != null && directory.getId() != null) {
                 List<Directory> subFolders = directoryService.getSubDirs(directory);
                 if (subFolders != null) {
                     logger.info("Get subs files successfully complete");
@@ -57,7 +53,6 @@ public class UserController {
                     logger.warn("Sub folder is null");
                     return ResponseEntity.notFound().build();
                 }
-            }
         }
         logger.warn("Get Sub files failed.");
         return ResponseEntity.badRequest().build();
