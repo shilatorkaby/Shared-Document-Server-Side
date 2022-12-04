@@ -28,15 +28,15 @@ public class UserController {
     @Autowired
     DirectoryService directoryService;
 
-    private static Logger logger = LogManager.getLogger(UserController.class.getName());
+    private static final Logger logger = LogManager.getLogger(UserController.class.getName());
 
     private static final Gson gson = new Gson();
 
     /**
      * gives all the sub-files, using map that includes directory name and its unique id
      *
-     * @param token (Unique key for each logged user)
-     * @param map   (stores id and name of the document)
+     * @param token     (Unique key for each logged user)
+     * @param directory (stores id and name of the document)
      * @return json list of Directories, wrapped with ResponseEntity
      */
     @RequestMapping(value = "/get/sub-files", method = RequestMethod.POST)
