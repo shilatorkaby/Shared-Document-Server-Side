@@ -34,6 +34,13 @@ public class SharingService {
     @Autowired
     private JavaMailSender mailSender;
 
+    /**
+     * shares the document via email to the desired contender,
+     * checks if the given email is registered user, and if the invitation is not forged
+     *
+     * @param contender (docId, email and token type Contender)
+     * @return contender, if something went wrong it returns null
+     */
     public Contender shareViaEmail(Contender contender) {
 
         if (!isEmailInDatabase(contender.getEmail()) || isEmailInDocument(contender.getDocId(), contender.getEmail())) {
@@ -47,6 +54,9 @@ public class SharingService {
         return contender;
     }
 
+    /**
+     * NOT USED RIGHT NOW, WILL BE FIXED SOON
+     */
     public DocumentLink shareViaLink(String email, HashMap<String, String> map) {
 
         Long documentId = Long.parseLong(map.get("documentId"));
@@ -67,6 +77,7 @@ public class SharingService {
     boolean isEmailInDocument(Long id, String email) {
         return (docPermissionRepository.findByDocIdAndEmail(id, email) != null);
     }
+
 
 
     public void sendmail(Contender contender) {
@@ -110,6 +121,9 @@ public class SharingService {
         return "User couldn't join document";
     }
 
+    /**
+     * NOT USED RIGHT NOW, WILL BE FIXED SOON
+     */
     public String verifyLinkToken(String email, String token) {
 
         DocumentLink optionalDocumentLink = documentLinkRepository.findByEditorToken(token);
