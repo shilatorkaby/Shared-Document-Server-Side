@@ -56,14 +56,14 @@ public class DocController {
      * fetch data about a specific document using his unique document Id
      *
      * @param token (Unique key for each logged user)
-     * @param id    (stores the id of the document)
+     * @param document    (stores the id of the document)
      * @return json Document, wrapped with ResponseEntity
      */
     @RequestMapping(value = "/fetch", method = RequestMethod.POST)
-    public ResponseEntity<String> getDocumentById(@RequestHeader("token") String token, @RequestBody Long id) {
+    public ResponseEntity<String> getDocumentById(@RequestHeader("token") String token, @RequestBody Document document) {
         UserBody user = authService.getCachedUser(token);
-        if (user != null && id != null) {
-            Document temp = docService.getDocumentById(user, id);
+        if (user != null && document.getId() != null) {
+            Document temp = docService.getDocumentById(user, document.getId());
             if (temp != null) {
                 return ResponseEntity.ok(gson.toJson(temp));
             }
