@@ -12,15 +12,43 @@ public class EditController {
     @MessageMapping("/join")
     public void sendPlainMessage(JoinMessage message) {
         System.out.println(message.user + " joined");
+
     }
 
 
     @MessageMapping("/update")
     @SendTo("/topic/updates")
     public UpdatedMessage sendPlainMessage(UpdatedMessage message) {
-        System.out.println(message.getContent());
+        if (message.getSender() != message.getReceiver())
+        {
+            String text = message.getContent();
+
+
+        }
         return message;
     }
+
+
+    /*  //     if (updateData.content == null && updateData.startPos < updateData.endPos) {
+  //       text =
+  //         text.substring(0, updateData.startPos) +
+  //         text.substring(updateData.endPos, text.length);
+  //     } else if (updateData.content == null) {
+  //       text =
+  //         text.substring(0, updateData.position + 1) +
+  //         text.substring(updateData.position + 2, text.length);
+  //     } else {
+  //       text =
+  //         text.substring(0, updateData.position) +
+  //         updateData.content +
+  //         text.substring(updateData.position, text.length);
+  //     }
+  //     textArea.val(text);
+  //     if (updateData.position < start) {
+  //       start++;
+  //       textArea[0].setSelectionRange(start, start);
+  //     }
+*/
 
     public enum UpdateType {
         DELETE,
