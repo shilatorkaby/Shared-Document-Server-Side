@@ -89,7 +89,7 @@ public class UserController {
      * creates directory, and places it according the father's id directory
      *
      * @param token (Unique key for each logged user)
-     * @param map   (stores father id and name of the directory - together they are unique combination to locate a specific directory)
+     * @param directory (stores father id and name of the directory - together they are unique combination to locate a specific directory)
      * @return json Directory, wrapped with ResponseEntity
      */
     @RequestMapping(value = "/create-directory", method = RequestMethod.POST)
@@ -174,10 +174,6 @@ public class UserController {
     @RequestMapping(value = "/get/optional/dir", method = RequestMethod.POST)
     public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody Directory directory) {
 
-//        logger.info("get option to move to directory: " + directory.getName());
-
-//        Directory directory = new Directory();
-//        directory.setId(Long.parseLong(map.get("id")));
         if (authService.getCachedUser(token) != null && directory.getId() != null) {
             logger.info("get option to move to directory: " + directory.getName());
 
