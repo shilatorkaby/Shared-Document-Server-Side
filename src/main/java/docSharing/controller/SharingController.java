@@ -7,6 +7,7 @@ import docSharing.service.SharingService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,30 +54,6 @@ public class SharingController {
         return ResponseEntity.badRequest().build();
     }
 
-    /**
-     * NOT USED RIGHT NOW, WILL BE FIXED SOON
-     */
-    @RequestMapping(value = "/share/via/link", method = RequestMethod.POST)
-    public ResponseEntity<String> shareViaLink(@RequestHeader("token") String token, @RequestBody String json) {
-        logger.info("Share via link , token is: " + token);
-        Gson gson = new Gson();
-        Map<String, String> map = gson.fromJson(json, HashMap.class);
-
-        UserBody user = authService.getCachedUser(token);
-
-        if (user != null) {
-            DocumentLink documentLink = sharingService.shareViaLink(user.getEmail(), (HashMap<String, String>) map);
-
-            map.clear();
-            map.put("viewerLink", "http://localhost:8080/accept/link-invite/" + documentLink.getViewerToken());
-            map.put("editorLink", "http://localhost:8080/accept/link-invite/" + documentLink.getEditorToken());
-            logger.info("Email was sent");
-            return ResponseEntity.ok(gson.toJson(map));
-        }
-        logger.warn("Share via link failed.");
-        return ResponseEntity.notFound().build();
-    }
-
 
     /**
      * email verification, at the end the invited user becomes a viewer or editor of the document
@@ -85,16 +62,16 @@ public class SharingController {
      * @return response status - 200 or 404
      */
     @RequestMapping(value = "/accept/email-invite/{token}")
-    public String emailVerification(@PathVariable("token") String token) {
+    public ResponseEntity<String> emailVerification(@PathVariable("token") String token) {
         logger.info("Email verification with token: " + token);
-        return sharingService.verifyEmailToken(token);
-    }
+        String temp = sharingService.verifyEmailToken(token);
 
-    /**
-     * NOT USED RIGHT NOW, WILL BE FIXED SOON
-     */
-    @RequestMapping(value = "/accept/link-invite/{token}")
-    public String linkVerification(@RequestHeader("token") String tokenUser, @PathVariable("token") String tokenLink) {
-        return sharingService.verifyEmailToken(tokenLink);
+        if(temp != null){
+            logger.info(token + " is legit");
+
+            return ResponseEntity.ok().body("<h1>Email verification was done successfully</h1>");  // 200
+        }
+        logger.warn("token is forged");
+        return ResponseEntity.notFound().build(); // 404
     }
 }

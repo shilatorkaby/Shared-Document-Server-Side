@@ -1,7 +1,5 @@
 package docSharing.controller;
 
-import docSharing.Entities.UpdatedMessage;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -17,9 +15,78 @@ public class EditController {
 
     @MessageMapping("/update")
     @SendTo("/topic/updates")
-    public UpdatedMessage sendPlainMessage(UpdatedMessage message) {
-        System.out.println(message.getContent());
+    public UpdateMessage sendPlainMessage(UpdateMessage message) {
         return message;
+    }
+
+    static class UpdateMessage {
+        private String user;
+        private UpdateType type;
+        private String content;
+        private int position;
+        private String startPos;
+        private String endPos;
+
+        private String docId;
+
+        public String getStartPos() {
+            return startPos;
+        }
+
+        public void setStartPos(String startPos) {
+            this.startPos = startPos;
+        }
+
+        public String getEndPos() {
+            return endPos;
+        }
+
+        public void setEndPos(String endPos) {
+            this.endPos = endPos;
+        }
+
+        public UpdateMessage() {
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
+        }
+
+        public UpdateType getType() {
+            return type;
+        }
+
+        public void setType(UpdateType type) {
+            this.type = type;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public void setPosition(int position) {
+            this.position = position;
+        }
+
+        public String getDocId() {
+            return docId;
+        }
+
+        public void setDocId(String docId) {
+            this.docId = docId;
+        }
     }
 
     public enum UpdateType {
