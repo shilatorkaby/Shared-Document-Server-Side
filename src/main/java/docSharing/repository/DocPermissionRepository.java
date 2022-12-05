@@ -19,6 +19,8 @@ public interface DocPermissionRepository extends JpaRepository<DocPermission, Lo
 
     @Query("SELECT d FROM DocPermission d WHERE d.docId = :docId and d.email = :email")
     DocPermission findByDocIdAndEmail(@Param("docId") Long docId, @Param("email") String email);
+    @Query("SELECT d FROM DocPermission d WHERE d.docId = :docId and d.email = :email and d.role = OWNER")
+    DocPermission findOwnerByDocIdAndEmail(@Param("docId") Long docId, @Param("email") String email);
 
     @Query("SELECT d FROM DocPermission d WHERE d.email = :email")
     List<DocPermission> findAllPermissionsByEmail(@Param("email") String email);

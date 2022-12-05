@@ -45,7 +45,7 @@ public class SharingService {
      */
     public Contender shareViaEmail(Contender contender) {
         logger.info("Share via email to contender: " + contender.getEmail());
-        if (!isEmailInDatabase(contender.getEmail()) || isEmailInDocument(contender.getDocId(), contender.getEmail())) {
+        if (!isEmailInDatabase(contender.getEmail()) && isNotOwner(contender.getDocId(),contender.getEmail())) {
             logger.warn("Share via email failed.");
             return null;
         }
@@ -67,8 +67,8 @@ public class SharingService {
         return (userRepository.findByEmail(email) != null);
     }
 
-    boolean isEmailInDocument(Long id, String email) {
-        return (docPermissionRepository.findByDocIdAndEmail(id, email) != null);
+    boolean isNotOwner(Long id, String email) {
+        return (docPermissionRepository.findOwnerByDocIdAndEmail(id, email) != null);
     }
 
     /**
