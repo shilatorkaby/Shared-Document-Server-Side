@@ -35,10 +35,11 @@ public class DocController {
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<String> save(@RequestHeader("token") String token, @RequestBody Document document) {
-        logger.info("Save the document: " + document.getId() + " with this token: " + token);
 
         UserBody user = authService.getCachedUser(token);
         if (user != null && document.getId() != null) {
+            logger.info("Save the document: " + document.getId() + " with this token: " + token);
+
             logger.info("User email is: " + user.getEmail());
             Document updatedDoc = docService.save(document);
             System.out.println(updatedDoc);
@@ -55,8 +56,8 @@ public class DocController {
     /**
      * fetch data about a specific document using his unique document Id
      *
-     * @param token (Unique key for each logged user)
-     * @param document    (stores the id of the document)
+     * @param token    (Unique key for each logged user)
+     * @param document (stores the id of the document)
      * @return json Document, wrapped with ResponseEntity
      */
     @RequestMapping(value = "/fetch", method = RequestMethod.POST)
@@ -84,7 +85,9 @@ public class DocController {
         if (user != null) {
             logger.info("User is not null");
             List<DocPermission> temp = docService.getRolesByEmail(user.getEmail());
-            return ResponseEntity.ok(gson.toJson(temp));
+            if (temp != null) {
+                return ResponseEntity.ok(gson.toJson(temp));
+            }
         }
         logger.warn("getRolesByToken is failed");
         return ResponseEntity.notFound().build();
