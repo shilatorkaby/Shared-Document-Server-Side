@@ -18,9 +18,9 @@ public class Directory {
     public Directory() {
     }
 
-    public Directory(Long fatherId, String dirName) {
+    public Directory(Long fatherId, String name) {
         this.fatherId = fatherId;
-        this.name = dirName;
+        this.name = name;
     }
 
     public Directory(Long fatherId, String name, Long fileId) {

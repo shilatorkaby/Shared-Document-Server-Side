@@ -64,20 +64,6 @@ class AuthServiceTest {
     }
 
     @Test
-    void authenticateLogin_succeed() {
-        User user = new User("asllld@gmsil.com", "1111111");
-        userRepository.save(user);
-//        assertTrue(authService.authenticateLogin(user));
-        userRepository.delete(user);
-    }
-
-    @Test
-    void authenticateLogin_not_succeed() {
-        User user = new User("asllld@gmsil.com", "1111111");
-//        assertFalse(authService.authenticateLogin(user));
-    }
-
-    @Test
     void isEmailInDatabase_succeed() {
         User user1 = new User("email@gmail.com","111111111111");
         userRepository.save(user1);
