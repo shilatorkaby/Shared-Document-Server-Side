@@ -82,7 +82,7 @@ public class AuthService {
     /**
      * verify the given token if it is not forged
      *
-     * @param token (unique String)
+     * @param token (Unique key for each logged user)
      * @return token, if something went wrong returns null
      */
     public String verifyToken(String token) {
@@ -99,10 +99,8 @@ public class AuthService {
             // each user creates by default a "root" directory
             directoryRepository.save(new Directory(user.getId() * -1, "root"));
             return token;
-            // return "<h1>Email verification was done successfully</h1>";
         }
         return null;
-        // return "You need to sign up first";
     }
 
     /**
