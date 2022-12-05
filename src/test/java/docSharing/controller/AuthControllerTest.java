@@ -19,24 +19,23 @@ class AuthControllerTest {
 
 
     @Test
-    void createUser_addLegalUser_statusOK() {
-        User a = new User("arielosh8@gmail.com","123123");
-        assertEquals(authController.createUser(a).getStatusCode() , HttpStatus.OK);
-        userRepository.delete(a);
+    void createUser_addIllegalUser_statusBadRequest() {
+        User user = new User("arielosh8@gmail.com", "123");
+        assertEquals(HttpStatus.BAD_REQUEST, authController.createUser(user).getStatusCode());
     }
 
     @Test
     void createUser_addExistUser_BadRequest() {
-        User user = new User("arielosh98@gmail.com","123123");
+        User user = new User("arielosh98@gmail.com", "123123");
         userRepository.save(user);
-        assertEquals(authController.createUser(user).getStatusCode() , HttpStatus.BAD_REQUEST);
+        assertEquals(HttpStatus.BAD_REQUEST, authController.createUser(user).getStatusCode());
         userRepository.delete(user);
     }
 
     @Test
-    void emailVerification_verifiedToken_statusOK() {
+    void emailVerification_unVerifiedToken_statusOK() {
         Unconfirmed unconfirmed = new Unconfirmed();
-        assertEquals(authController.emailVerification(unconfirmed.getToken()).getStatusCode() , HttpStatus.OK);
+        assertEquals(HttpStatus.NOT_FOUND, authController.emailVerification(unconfirmed.getToken() + "xyz").getStatusCode());
     }
 
     @Test
@@ -47,16 +46,17 @@ class AuthControllerTest {
 
     @Test
     void login_loginWithRegisteredUser_statusOK() {
-        User user = new User("98@gmail.com","123123");
+        User user = new User("98@gmail.com", "123123");
         userRepository.save(user);
         assertEquals(authController.login(user).getStatusCode(), HttpStatus.OK);
         userRepository.delete(user);
     }
 
     @Test
-    void login_loginWithUnRegisteredUser_statusOK() {
-        User user = new User("98@gmail.com","123123");
-        assertEquals(authController.login(user).getStatusCode(), HttpStatus.NOT_FOUND);
-
+    void login_loginWithSavedUser_statusOK() {
+        User user = new User("test@gmail.com", "123123");
+        userRepository.save(user);
+        assertEquals(HttpStatus.OK, authController.login(user).getStatusCode());
+        userRepository.delete(user);
     }
 }

@@ -25,9 +25,6 @@ public class SharingService {
     DocPermissionRepository docPermissionRepository;
 
     @Autowired
-    DocumentLinkRepository documentLinkRepository;
-
-    @Autowired
     ContenderRepository contenderRepository;
 
     @Autowired

@@ -18,8 +18,6 @@ public class UserService {
     @Autowired
     private DocRepository docRepository;
     @Autowired
-    private DocumentLinkRepository documentLinkRepository;
-    @Autowired
     private DocPermissionRepository docPermissionRepository;
     @Autowired
     private DirectoryRepository directoryRepository;
@@ -54,11 +52,10 @@ public class UserService {
             }
             if (fatherId != null) {
                 Document newDocument = docRepository.save(new Document(user.getEmail(), documentBody.getFileName()));
-                documentLinkRepository.save(new DocumentLink(newDocument.getId()));
                 docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), UserRole.OWNER));
 
                 directoryRepository.save(new Directory(fatherId, documentBody.getFileName(), newDocument.getId()));
-                logger.info("new doc id: " + newDocument.getId()+"new document name: " + newDocument.getFileName());
+                logger.info("new doc id: " + newDocument.getId() + "new document name: " + newDocument.getFileName());
                 logger.info("Create document completed");
                 return newDocument;
             }
