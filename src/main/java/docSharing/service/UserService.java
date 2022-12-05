@@ -1,7 +1,10 @@
 package docSharing.service;
 
 import docSharing.Entities.*;
+import docSharing.controller.UserController;
 import docSharing.repository.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,9 @@ public class UserService {
     @Autowired
     private DirectoryRepository directoryRepository;
 
+    private static final Logger logger = LogManager.getLogger(UserService.class.getName());
+
+
     public UserService() {
     }
 
@@ -36,10 +42,14 @@ public class UserService {
         User user = userRepository.findByEmail(temp.getEmail());
         Long fatherId = null;
 
+        logger.info("Create document to user: " + temp.getEmail() + "doc body: " + documentBody.toString());
+
         if (documentBody != null && user.getId() != null && !findDoc(user, documentBody.getFileName())) {
             if (documentBody.getFatherId() != null && directoryRepository.existsById(documentBody.getFatherId())) {
                 fatherId = documentBody.getFatherId();
+                logger.info("father is is: " + fatherId);
             } else if (documentBody.getFatherId() == null) {
+                logger.warn("father id is null");
                 fatherId = directoryRepository.findByFatherId(user.getId() * -1).get(0).getId();
             }
             if (fatherId != null) {
@@ -48,9 +58,12 @@ public class UserService {
                 docPermissionRepository.save(new DocPermission(newDocument.getId(), user.getEmail(), UserRole.OWNER));
 
                 directoryRepository.save(new Directory(fatherId, documentBody.getFileName(), newDocument.getId()));
+                logger.info("new doc id: " + newDocument.getId()+"new document name: " + newDocument.getFileName());
+                logger.info("Create document completed");
                 return newDocument;
             }
         }
+        logger.warn("Create document failed.");
         return null;
     }
 

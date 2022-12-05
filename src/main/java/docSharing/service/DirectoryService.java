@@ -5,6 +5,8 @@ import docSharing.Entities.User;
 import docSharing.Entities.UserBody;
 import docSharing.repository.DirectoryRepository;
 import docSharing.repository.UserRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +25,18 @@ public class DirectoryService {
     @Autowired
     private DirectoryRepository docPermissionRepository;
 
+    private static final Logger logger = LogManager.getLogger(DirectoryService.class.getName());
+
+
 
     public List<Directory> getOptionToMove(Directory directory) {
-
+        logger.info("get Option To Move: " + directory.getName());
         directory.setFatherId(directoryRepository.findById(directory.getId()).get().getFatherId());
 
-        if (!directoryRepository.existsById(directory.getId()) || !directoryRepository.existsById(directory.getFatherId()))
-            return null;
-
+        if (!directoryRepository.existsById(directory.getId()) || !directoryRepository.existsById(directory.getFatherId())){
+            logger.warn("get Option To Move failed");
+        return null;
+    }
         directory.setFatherId(directoryRepository.findById(directory.getId()).get().getFatherId());
         List<Directory> optionalDirs = new ArrayList<>();
         List<Directory> sisterDirs = directoryRepository.findDirsByFatherId(directory.getFatherId(), directory.getId());
@@ -41,11 +47,18 @@ public class DirectoryService {
         if (fatherDir != null && fatherDir.getFatherId() > 0) {
             directoryRepository.findById(fatherDir.getFatherId()).ifPresent(optionalDirs::add);
         }
-        return optionalDirs.size() > 0 ? optionalDirs : null;
+        if(optionalDirs.size() > 0){
+            logger.info("get Option To Mov completed");
+            return optionalDirs;
+        }
+        else {
+            logger.warn("get Option To Mov failed");
+            return null;
+        }
     }
 
     public Directory changeDir(Directory directory) {
-
+        logger.info("Change dir : " + directory.getName());
         Directory currentDirectory = directoryRepository.findById(directory.getId()).orElse(null);
         Directory futureFatherDirectory = directoryRepository.findById(directory.getFatherId()).orElse(null);
 
@@ -58,30 +71,37 @@ public class DirectoryService {
                 directoryRepository.updateFatherId(directory.getFatherId(), directory.getId());
             }
         }
-        return directoryRepository.findByFatherIdAndName(directory.getFatherId(), directory.getName());
+        Directory dir = directoryRepository.findByFatherIdAndName(directory.getFatherId(), directory.getName());
+        logger.info("Directory: "+ dir.getName() + dir.getId());
+        return dir;
     }
 
     public List<Directory> getSubDirs(Directory directory) {
+        logger.info("Get subs dir of: " +directory.getName() );
         if (directoryRepository.existsById(directory.getId())) {
+            logger.info("Get subs dir completed" );
             return directoryRepository.findByFatherId(directory.getId());
         }
+        logger.warn("Get subs dir failed" );
         return null;
     }
 
     public List<Directory> getSubDirs(UserBody user) {
-
+        logger.info("Get subs dir of: " +user.getEmail() );
         Long userId = userRepository.findByEmail(user.getEmail()).getId();
 
         Directory rootDir = directoryRepository.findByFatherId(-1 * userId).get(0);
         if (rootDir != null) {
+            logger.info("Get subs dir from user completed" );
             return directoryRepository.findByFatherId(rootDir.getId());
         }
+        logger.warn("Get subs dir from user failed" );
         return null;
     }
 
 
     public Directory addNewDir(UserBody temp, Directory currentDirectory) {
-
+        logger.info("Add new dir :" + currentDirectory.getName() );
         User user = userRepository.findByEmail(temp.getEmail());
         Directory newDir = null;
 
@@ -99,7 +119,14 @@ public class DirectoryService {
                 }
             }
         }
-        return newDir != null ? directoryRepository.save(newDir) : null;
+        if(newDir != null){
+            logger.info("Add new dir completed");
+            return directoryRepository.save(newDir);
+        }
+        else{
+            logger.warn("Add new dir failed");
+            return null;
+        }
     }
 
     boolean directoryIsNotExist(Long fatherId, String name) {
@@ -107,7 +134,7 @@ public class DirectoryService {
     }
 
     public boolean removeDir(Directory directory) {
-
+        logger.info("Remove dir: " + directory.getName());
         if (directory != null) {
             if (directory.getDocId() != null) {
                 documentLinkRepository.deleteByDocId(directory.getDocId());
@@ -117,13 +144,15 @@ public class DirectoryService {
                 directoryRepository.delete(directory);
                 deleteDirectoryRec(directory);
             }
+            logger.info("Remove dir completed");
             return !directoryRepository.existsById(directory.getId());
         }
+        logger.warn("Remove dir failed");
         return false;
     }
 
     private void deleteDirectoryRec(Directory directory) {
-
+        logger.info("Delete dir: " + directory.getName());
         List<Directory> subDirs = directoryRepository.findByFatherId(directory.getId());
         if (subDirs.size() > 0) {
             for (Directory dir : subDirs) {
@@ -135,9 +164,11 @@ public class DirectoryService {
                 } else {
                     deleteDirectoryRec(dir);
                     directoryRepository.delete(dir);
+                    logger.info("Delete dir completed");
                 }
             }
         }
+        logger.warn("Delete dir failed.");
     }
 
 

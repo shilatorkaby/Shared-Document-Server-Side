@@ -152,8 +152,13 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
+
     /**
-     * NOT USED RIGHT NOW, WILL BE FIXED SOON
+     * deletes a directory
+     *
+     * @param token (unique String)
+     * @param directory
+     * @return
      */
     @RequestMapping(value = "delete/dir", method = RequestMethod.POST)
     public ResponseEntity<String> removeDir(@RequestHeader("token") String token, @RequestBody Directory directory) {
@@ -168,8 +173,13 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
+
     /**
-     * NOT USED RIGHT NOW, WILL BE FIXED SOON
+     * gets all the optional directories to move (directory to another one)
+     *
+     * @param token (unique String)
+     * @param directory
+     * @return json of all optional Directories, wrapped in Response Entity
      */
     @RequestMapping(value = "/get/optional/dir", method = RequestMethod.POST)
     public ResponseEntity<String> getOptionToMove(@RequestHeader("token") String token, @RequestBody Directory directory) {
