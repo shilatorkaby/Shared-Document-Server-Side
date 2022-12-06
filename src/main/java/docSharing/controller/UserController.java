@@ -122,7 +122,7 @@ public class UserController {
     public ResponseEntity<String> createDocument(@RequestHeader("token") String token, @RequestBody DocumentBody document) {
         UserBody user = authService.getCachedUser(token);
 
-        if (user != null && document.getFatherId() != null && document.getEmail() != null && document.getFileName() != null) {
+        if (user != null && document.getFileName() != null) {
             logger.info("Create document : " + document.getFileName());
             Document temp = userService.createDocument(user, document);
             if (temp != null) {

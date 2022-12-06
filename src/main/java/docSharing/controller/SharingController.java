@@ -25,29 +25,28 @@ public class SharingController {
     SharingService sharingService;
 
     private static Logger logger = LogManager.getLogger(SharingController.class.getName());
+    private static final Gson gson = new Gson();
 
     /**
      * share via email endpoint, receives data about the desired user and send email invitation to the document
      *
      * @param token (Unique key for each logged user)
-     * @param map   has inside docId, email & userRole
+     * @param contender   has inside docId, email & userRole
      * @return email verification
      */
     @RequestMapping(value = "/share/via/email", method = RequestMethod.POST)
-    public ResponseEntity<String> shareViaEmail(@RequestHeader("token") String token, @RequestBody HashMap<String, String> map) {
+    public ResponseEntity<String> shareViaEmail(@RequestHeader("token") String token, @RequestBody Contender contender) {
         logger.info("Share via email , token is: " + token);
         UserBody user = authService.getCachedUser(token);
 
-        if (user != null) {
-            Long docId = Long.parseLong(map.get("docId"));
-            String email = map.get("email");
-            UserRole userRole = (map.get("userRole").equals("viewer")) ? UserRole.VIEWER : UserRole.EDITOR;
-            logger.info("Doc id: " + docId + "email: " + email + "user role: " + userRole);
+        if (user != null && contender.getDocId() != null && contender.getEmail() != null) {
+//            contender.setUserRole((contender.getUserRole() == "viewer") ? UserRole.VIEWER : UserRole.EDITOR);
+            logger.info("Doc id: " + contender.getDocId() + "email: " + contender.getEmail() + "user role: " + contender.getUserRole());
             // we should check if this email valid
-            Contender contender = sharingService.shareViaEmail(new Contender(docId, email, null, userRole));
-            if (contender != null) {
+            Contender newContender = sharingService.shareViaEmail(contender);
+            if (newContender != null) {
                 logger.info("Contender is not null , email was sent");
-                return ResponseEntity.ok(email + " was invited to the document");
+                return ResponseEntity.ok(gson.toJson(contender));
             }
         }
         logger.warn("Share via email failed.");

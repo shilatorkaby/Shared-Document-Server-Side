@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -105,17 +104,10 @@ class UserControllerTest {
     @Test
     void createNewDir_newDirectory_ResponseOK() {
 
-        directoryRepository.save(new Directory(287878L, "testDir"));
-        Directory directory = directoryRepository.findByFatherIdAndName(287878L, "testDir");
+        Directory directory = directoryRepository.save(new Directory(287878L, "testDir"));
 
-//        directoryRepository.deleteByName("subTestDir");
-        directoryRepository.save(new Directory(directory.getId(), "subTestDir"));
-        Directory newDirectory = directoryRepository.findByFatherIdAndName(directory.getId(), "subTestDir");
-        directoryRepository.delete(newDirectory);
-
-        ResponseEntity<String> response = userController.createNewDir(token,directory);
+        ResponseEntity<String> response = userController.createNewDir(token,new Directory(directory.getId(), "subTestDir"));
         directoryRepository.delete(directory);
-        directoryRepository.delete(newDirectory);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
